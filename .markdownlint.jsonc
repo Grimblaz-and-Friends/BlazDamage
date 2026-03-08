@@ -1,0 +1,10 @@
+{
+    // Allow inline HTML (useful in design/decision docs)
+    "MD033": false,
+    // Allow multiple headings with same content (siblings_only)
+    "MD024": { "siblings_only": true },
+    // Allow longer lines in tables (tables are exempt, line_length 300 for prose)
+    "MD013": { "line_length": 300, "tables": false },
+    // Allow trailing punctuation in headings
+    "MD026": false
+}

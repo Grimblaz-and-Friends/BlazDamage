@@ -1,6 +1,6 @@
 # BlazDamage
 
-A modern spiritual successor to [DrDamage](https://www.curseforge.com/wow/addons/dr-damage) for **Retail WoW** (The War Within / Midnight).
+A modern spiritual successor to [DrDamage](https://www.curseforge.com/wow/addons/dr-damage) for **Retail WoW** (Midnight, Interface 12.x).
 
 BlazDamage displays calculated damage and healing metrics directly on your actionbar buttons, and injects enriched statistics into spell tooltips — all without manually maintained spell data.
 
@@ -26,7 +26,7 @@ See [Issue #2](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/2) for 
 
 ## Quick Start
 
-> Full setup instructions: [Documents/Development/QUICK-START.md](Documents/Development/QUICK-START.md) *(coming soon)*
+> Full setup instructions: [Documents/Development/QUICK-START.md](Documents/Development/QUICK-START.md)
 
 **Prerequisites:** Lua 5.1, [luarocks](https://luarocks.org/), [busted](https://lunarmodules.github.io/busted/), [luacheck](https://github.com/mpeterv/luacheck), PowerShell (`pwsh`)
 
@@ -38,14 +38,14 @@ Copy or symlink the repo folder into your WoW AddOns directory, then `/reload` i
 
 ## Documentation
 
-See [Documents/index.md](Documents/index.md) for the full documentation hub *(coming soon)*.
+See [Documents/index.md](Documents/index.md) for the full documentation hub.
 
 ## Contributing
 
 Run `luacheck .` before every commit.
 Run `pwsh .github/scripts/validate-architecture.ps1` before every PR.
 
-See [.github/architecture-rules.md](.github/architecture-rules.md) for code architecture guidelines *(coming soon)*.
+See [.github/architecture-rules.md](.github/architecture-rules.md) for code architecture guidelines.
 
 ### Architecture in brief
 
