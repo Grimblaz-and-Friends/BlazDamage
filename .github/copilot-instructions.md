@@ -36,7 +36,8 @@ Layered architecture with strict Engine/UI separation:
 └─────────────────────────────────────────────────┘
 ```
 
-**The Portability Test**: *"Would this code run unmodified in a standalone Lua 5.1 interpreter with no WoW API?"*
+**The Portability Test**: _"Would this code run unmodified in a standalone Lua 5.1 interpreter with no WoW API?"_
+
 - **YES** → belongs in `Engine/` or `Config/`
 - **NO** → belongs in `UI/`
 

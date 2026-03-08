@@ -30,15 +30,15 @@ This single question resolves most placement debates.
          │     UI/     │  ← WoW API lives here
          └──────┬──────┘
                 │ calls
-         ┌──────▼──────┐
-         │   Engine/   │  ← Pure Lua, no WoW API
-         └──────┬──────┘
+         ┌──────▼──────┐     ┌─────────┐
+         │   Engine/   │ ◄───│ Tests/  │
+         └──────┬──────┘     └─────────┘
                 │ reads
-    ┌───────────┼───────────┐
-    │           │           │
-┌───▼───┐  ┌───▼───┐  ┌───▼───┐
-│Config/│  │ Data/ │  │Tests/ │
-└───────┘  └───────┘  └───────┘
+         ┌──────┴──────┐
+         │             │
+     ┌───▼───┐    ┌───▼───┐
+     │Config/│    │ Data/ │
+     └───────┘    └───────┘
 ```
 
 ## Dependency Rules
@@ -47,7 +47,7 @@ This single question resolves most placement debates.
 
 ```lua
 -- UI → Engine (UI calls Engine for calculations)
--- UI/OverlayManager.lua
+-- UI/OverlayRenderer.lua
 local Calculator = BD.Calculator
 local avg = Calculator.calculateAverage(baseValue, critChance, critMult, vers)  -- ✅ OK
 
@@ -85,7 +85,7 @@ frame:RegisterEvent("UNIT_STATS")   -- ❌ Event system in Engine
 hooksecurefunc("ActionButton_Update", fn)  -- ❌ Hook in Engine
 
 -- UI → Inline calculations (VIOLATION — duplicate Engine logic)
--- UI/OverlayManager.lua
+-- UI/OverlayRenderer.lua
 local avg = baseValue * (1 + critChance * critMult) * (1 + vers)  -- ❌ Formula in UI
 -- Should call: Calculator.calculateAverage(baseValue, critChance, critMult, vers)
 
@@ -133,7 +133,7 @@ Engine/
 └── MetricFormatter.lua
 
 UI/
-├── OverlayManager.lua      # PascalCase
+├── OverlayRenderer.lua     # PascalCase
 ├── StatCollector.lua
 ├── TooltipEnricher.lua
 └── ActionbarDiscovery.lua
