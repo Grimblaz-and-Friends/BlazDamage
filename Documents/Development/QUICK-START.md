@@ -22,7 +22,7 @@ git clone https://github.com/Grimblaz-and-Friends/BlazDamage.git
 **Windows:**
 
 ```powershell
-# Create a junction (no admin required for junctions in WoW AddOns folder)
+# Requires admin/UAC — WoW is installed under C:\Program Files\ by default
 cmd /c mklink /J "C:\Program Files\World of Warcraft\_retail_\Interface\AddOns\BlazDamage" "C:\path\to\BlazDamage"
 ```
 

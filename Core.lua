@@ -7,13 +7,15 @@ local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(_, event, name)
     if event == "ADDON_LOADED" and name == addonName then
+        BlazDamageDB = BlazDamageDB or {}
+        BD.config = BlazDamageDB
         print("|cFF4FC3F7BlazDamage|r v" .. BD.VERSION .. " loaded.")
     end
 end)
 
 -- Slash commands
 SLASH_BLAZDAMAGE1 = "/blazdamage"
-SLASH_BD1 = "/bd"
+SLASH_BLAZDAMAGE2 = "/bd"
 SlashCmdList["BLAZDAMAGE"] = function(msg)
     print("|cFF4FC3F7BlazDamage|r v" .. BD.VERSION)
 end

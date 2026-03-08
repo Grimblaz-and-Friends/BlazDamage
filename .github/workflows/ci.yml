@@ -24,6 +24,7 @@ jobs:
         uses: leafo/gh-actions-luarocks@v4
 
       - name: Cache luarocks tree
+        id: luarocks-cache
         uses: actions/cache@v4
         with:
           path: ~/.luarocks
@@ -32,9 +33,11 @@ jobs:
             luarocks-${{ runner.os }}-lua5.1-
 
       - name: Install busted
+        if: steps.luarocks-cache.outputs.cache-hit != 'true'
         run: luarocks install busted
 
       - name: Install luacheck
+        if: steps.luarocks-cache.outputs.cache-hit != 'true'
         run: luarocks install luacheck
 
       - name: Lint

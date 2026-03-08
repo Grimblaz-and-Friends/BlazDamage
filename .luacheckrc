@@ -9,13 +9,16 @@ stds.wow = {
         -- Slash commands
         "SlashCmdList",
         "SLASH_BLAZDAMAGE1",
-        "SLASH_BD1",
+        "SLASH_BLAZDAMAGE2",
         -- C_ namespaces
         "C_Spell",
+        "C_AddOns",
         "C_UnitAuras",
         "C_TooltipInfo",
         "C_ClassTalents",
         "C_Traits",
+        -- SavedVariables
+        "BlazDamageDB",
         -- Stat functions
         "GetSpellBonusDamage",
         "GetSpellBonusHealing",

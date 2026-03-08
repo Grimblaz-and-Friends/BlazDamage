@@ -53,7 +53,7 @@ function Remove-LuaLineComments {
     param([string]$Content)
     # Remove from -- to end of line (but not inside strings — simplified approach)
     return ($Content -split "`n" | ForEach-Object {
-        $_ -replace '--[^"]*$', ''
+        $_ -replace '--.*$', ''
     }) -join "`n"
 }
 
@@ -69,32 +69,37 @@ $ForbiddenPatterns = @(
     @{ Pattern = 'C_ClassTalents\.'; Description = 'C_ClassTalents API call' },
     @{ Pattern = 'C_Traits\.';       Description = 'C_Traits API call' },
     # Stat functions
-    @{ Pattern = 'GetSpellBonusDamage';  Description = 'WoW stat API call' },
-    @{ Pattern = 'GetSpellBonusHealing'; Description = 'WoW stat API call' },
-    @{ Pattern = 'GetSpellCritChance';   Description = 'WoW stat API call' },
-    @{ Pattern = 'GetHaste';             Description = 'WoW stat API call' },
-    @{ Pattern = 'GetMeleeHaste';        Description = 'WoW stat API call' },
-    @{ Pattern = 'GetMasteryEffect';     Description = 'WoW stat API call' },
-    @{ Pattern = 'GetVersatilityBonus';  Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetSpellBonusDamage\b';  Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetSpellBonusHealing\b'; Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetSpellCritChance\b';   Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetHaste\b';             Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetMeleeHaste\b';        Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetMasteryEffect\b';     Description = 'WoW stat API call' },
+    @{ Pattern = '\bGetVersatilityBonus\b';  Description = 'WoW stat API call' },
     # Unit functions
-    @{ Pattern = 'UnitAttackPower'; Description = 'WoW unit API call' },
-    @{ Pattern = 'UnitDamage';      Description = 'WoW unit API call' },
-    @{ Pattern = 'UnitStat';        Description = 'WoW unit API call' },
-    @{ Pattern = 'UnitLevel';       Description = 'WoW unit API call' },
+    @{ Pattern = '\bUnitAttackPower\b'; Description = 'WoW unit API call' },
+    @{ Pattern = '\bUnitDamage\b';      Description = 'WoW unit API call' },
+    @{ Pattern = '\bUnitStat\b';        Description = 'WoW unit API call' },
+    @{ Pattern = '\bUnitLevel\b';       Description = 'WoW unit API call' },
     # Action functions
-    @{ Pattern = 'GetActionInfo'; Description = 'WoW action API call' },
-    @{ Pattern = 'HasAction';     Description = 'WoW action API call' },
-    @{ Pattern = 'IsUsableAction'; Description = 'WoW action API call' },
+    @{ Pattern = '\bGetActionInfo\b'; Description = 'WoW action API call' },
+    @{ Pattern = '\bHasAction\b';     Description = 'WoW action API call' },
+    @{ Pattern = '\bIsUsableAction\b'; Description = 'WoW action API call' },
     # Frame & UI
-    @{ Pattern = 'CreateFrame';            Description = 'Frame creation' },
-    @{ Pattern = 'UIParent';               Description = 'Frame reference' },
-    @{ Pattern = 'GameTooltip';            Description = 'Tooltip reference' },
-    @{ Pattern = 'InterfaceOptionsFrame';  Description = 'UI frame reference' },
-    @{ Pattern = 'hooksecurefunc';         Description = 'Secure function hook' },
+    @{ Pattern = '\bCreateFrame\b';            Description = 'Frame creation' },
+    @{ Pattern = '\bUIParent\b';               Description = 'Frame reference' },
+    @{ Pattern = '\bGameTooltip\b';            Description = 'Tooltip reference' },
+    @{ Pattern = '\bInterfaceOptionsFrame\b';  Description = 'UI frame reference' },
+    @{ Pattern = '\bhooksecurefunc\b';         Description = 'Secure function hook' },
+    # Frame methods (forbidden in Engine layer)
+    @{ Pattern = '\bSetText\b';     Description = 'Frame method call' },
+    @{ Pattern = '\bSetPoint\b';    Description = 'Frame method call' },
+    @{ Pattern = '\bSetFont\b';     Description = 'Frame method call' },
+    @{ Pattern = '\bFontString\b';  Description = 'FontString reference' },
     # Event system
-    @{ Pattern = 'RegisterEvent';   Description = 'Event registration' },
-    @{ Pattern = 'UnregisterEvent'; Description = 'Event unregistration' },
-    @{ Pattern = 'SetScript';       Description = 'Script handler registration' },
+    @{ Pattern = '\bRegisterEvent\b';   Description = 'Event registration' },
+    @{ Pattern = '\bUnregisterEvent\b'; Description = 'Event unregistration' },
+    @{ Pattern = '\bSetScript\b';       Description = 'Script handler registration' },
     # Global state
     @{ Pattern = 'SlashCmdList'; Description = 'Slash command global' },
     @{ Pattern = 'SLASH_';       Description = 'Slash command prefix global' }
