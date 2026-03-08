@@ -5,5 +5,14 @@
   },
   "search.exclude": {
     "**/Libs": true
+  },
+  // PowerShell formatter — match the authored column-aligned style
+  "powershell.codeFormatting.alignPropertyValuePairs": true,
+  "powershell.codeFormatting.useConstantStrings": false,
+  "powershell.codeFormatting.openBraceOnSameLine": true,
+  "powershell.codeFormatting.newLineAfterOpenBrace": true,
+  // Markdown formatter — keep authored emphasis and table style
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   }
 }
