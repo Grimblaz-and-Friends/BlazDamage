@@ -2,6 +2,9 @@
 
 std = "lua51"
 
+-- Exclude luarocks-installed packages from linting (vendor code, not ours)
+exclude_files = {".luarocks/**"}
+
 -- WoW API globals — minimal set covering what's actually used at the root/UI level
 -- Expand this list as new WoW API calls are added in UI/ files
 stds.wow = {
