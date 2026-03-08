@@ -1,3 +1,7 @@
 {
-  "recommendations": []
+  "recommendations": [
+    "sumneko.lua",
+    "ketho.wow-api",
+    "EditorConfig.EditorConfig"
+  ]
 }

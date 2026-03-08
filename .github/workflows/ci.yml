@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Lua 5.1
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.1"
+
+      - name: Install luarocks
+        uses: leafo/gh-actions-luarocks@v4
+
+      - name: Cache luarocks tree
+        id: luarocks-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.luarocks
+          key: luarocks-${{ runner.os }}-lua5.1-${{ hashFiles('.github/workflows/ci.yml') }}
+          restore-keys: |
+            luarocks-${{ runner.os }}-lua5.1-
+
+      - name: Install busted
+        if: steps.luarocks-cache.outputs.cache-hit != 'true'
+        run: luarocks install busted
+
+      - name: Install luacheck
+        if: steps.luarocks-cache.outputs.cache-hit != 'true'
+        run: luarocks install luacheck
+
+      - name: Lint
+        run: luacheck .
+
+      - name: Validate architecture
+        run: pwsh .github/scripts/validate-architecture.ps1
+
+      - name: Unit tests
+        run: busted Tests/

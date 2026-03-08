@@ -7,7 +7,7 @@ WoW addon that displays calculated damage/healing metrics on actionbar buttons a
 ## Technology Stack
 
 - **Language**: Lua 5.1 (WoW API runtime)
-- **Platform**: World of Warcraft Retail (The War Within / Midnight, Interface 11.x)
+- **Platform**: World of Warcraft Retail (Midnight, Interface 12.x)
 - **Framework**: None (pure WoW addon — Ace3 optional later)
 - **Database**: None (WoW SavedVariables for persistence)
 - **Build Tool**: None (WoW addons are pure Lua — no transpilation or bundling)
