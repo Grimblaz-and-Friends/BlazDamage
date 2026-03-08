@@ -1,0 +1,27 @@
+# Copilot workflow-template tracking (agent scaffolding — local only)
+/.copilot-tracking/
+/.copilot-tracking-archive/
+
+# Visual verification screenshots (local only)
+screenshots/
+
+# Playwright MCP working directory (fallback — native browser tools don't need this)
+/.playwright-mcp/
+
+# Loose PNGs in project root (e.g. CE-gate screenshots)
+/*.png
+
+# Pester test output
+testResults.xml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories (preserve committed .vscode config)
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
