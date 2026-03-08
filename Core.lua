@@ -7,7 +7,15 @@ local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(_, event, name)
     if event == "ADDON_LOADED" and name == addonName then
-        BlazDamageDB = BlazDamageDB or {}
+        if type(BlazDamageDB) ~= "table" then
+            BlazDamageDB = {}
+        end
+        -- Merge defaults into saved vars (nil-fill: only fills missing keys, one level)
+        for k, v in pairs(BD.defaults) do
+            if BlazDamageDB[k] == nil then
+                BlazDamageDB[k] = v
+            end
+        end
         BD.config = BlazDamageDB
         print("|cFF4FC3F7BlazDamage|r v" .. BD.VERSION .. " loaded.")
     end

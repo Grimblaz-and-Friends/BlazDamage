@@ -131,7 +131,7 @@ WoW provides an empty table (or the previously-saved table) in the global `BlazD
 -- In Core.lua ADDON_LOADED handler
 local function initSavedVars()
     BlazDamageDB = BlazDamageDB or {}
-    -- Deep merge defaults into saved vars (don't overwrite existing prefs)
+    -- Merge defaults into saved vars (nil-fill: only fills missing keys, one level)
     for k, v in pairs(BD.defaults) do
         if BlazDamageDB[k] == nil then
             BlazDamageDB[k] = v

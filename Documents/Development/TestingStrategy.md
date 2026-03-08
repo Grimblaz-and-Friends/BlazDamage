@@ -24,7 +24,7 @@ Tests live in `Tests/` and follow busted BDD conventions:
 Engine modules must satisfy two requirements to be `require()`-able in standalone busted:
 
 1. **`return` the module table** — busted's `require()` uses the return value; modules that only assign to `BD.ModuleName` and return nothing yield `nil` from `require()`.
-2. **Guard the `BD` namespace** — busted passes `("Engine.ModuleName", nil)` as varargs, so `local addonName, BD = ...` gives `BD = nil`. Engine modules must either guard with `BD = BD or {}` or tests must provide a shim.
+2. **Guard the `BD` namespace** — busted passes `("Engine.ModuleName", nil)` as varargs, so `local addonName, BD = ...` gives `BD = nil`. The `BD = BD or {}` guard in the module handles this — no test-side shim is needed.
 
 **Recommended patterns**:
 
@@ -48,8 +48,6 @@ return Calculator  -- required for busted require() to work
 Test file (`Tests/Calculator_spec.lua`):
 
 ```lua
-_G.BD = {}  -- provide the namespace shim before require()
-
 local Calculator = require("Engine.Calculator")
 
 describe("Calculator", function()
@@ -68,17 +66,17 @@ describe("Calculator", function()
         Calculator = require("Engine.Calculator")
     end)
 
-    describe("calculateAverage", function()
+    describe("computeAverage", function()
         it("returns base value with zero crit and zero vers", function()
-            assert.are.equal(100, Calculator.calculateAverage(100, 0, 0, 0))
+            assert.are.equal(100, Calculator.computeAverage(100, 0, 0, 0))
         end)
 
         it("applies crit multiplier", function()
-            assert.near(125, Calculator.calculateAverage(100, 0.25, 1.0, 0), 0.01)
+            assert.near(125, Calculator.computeAverage(100, 0.25, 1.0, 0), 0.01)
         end)
 
         it("applies versatility", function()
-            assert.near(110, Calculator.calculateAverage(100, 0, 0, 0.10), 0.01)
+            assert.near(110, Calculator.computeAverage(100, 0, 0, 0.10), 0.01)
         end)
     end)
 end)
