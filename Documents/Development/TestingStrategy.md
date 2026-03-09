@@ -32,7 +32,7 @@ Engine module (`Engine/Calculator.lua`):
 
 ```lua
 local _addonName, BD = ...
-BD = BD or {}  -- guard: BD is nil when loaded by busted
+if type(BD) ~= "table" then BD = {} end  -- busted passes filename string as 2nd vararg; WoW passes the BD table
 
 local Calculator = {}
 

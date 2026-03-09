@@ -58,6 +58,15 @@ describe("DescriptionParser", function()
                 local result = DescriptionParser.parse("1,000 to 2,000 damage")
                 assert.is_nil(result[1].duration)
             end)
+
+            it("parses range damage with a school label correctly", function()
+                local result = DescriptionParser.parse("1,000 to 2,000 Fire damage")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("direct", result[1].type)
+                assert.are.equal(1000, result[1].min)
+                assert.are.equal(2000, result[1].max)
+            end)
         end)
 
         -- -----------------------------------------------------------------

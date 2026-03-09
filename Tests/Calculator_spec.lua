@@ -195,6 +195,11 @@ describe("Calculator", function()
                 local result = Calculator.computeMetrics({}, stdStats)
                 assert.is_nil(result)
             end)
+
+            it("returns nil when stats is nil", function()
+                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, nil)
+                assert.is_nil(result)
+            end)
         end)
 
         -- -----------------------------------------------------------------

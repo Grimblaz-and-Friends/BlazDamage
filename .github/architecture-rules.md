@@ -174,10 +174,12 @@ return Calculator  -- needed for require() in busted
 -- Tests/Calculator_spec.lua
 describe("Calculator", function()
     local Calculator
+    local DescriptionParser
 
     setup(function()
         -- Load the module under test
         Calculator = require("Engine.Calculator")
+        DescriptionParser = require("Engine.DescriptionParser")
     end)
 
     describe("computeMetrics", function()

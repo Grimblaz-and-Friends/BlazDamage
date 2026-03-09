@@ -14,7 +14,7 @@ local PATTERNS = {
     channel       = "[Cc]hannels? ([%d,]+)[%a%s]*damage over (%d+) sec",
     range_dot     = "([%d,]+) to ([%d,]+)[%a%s]*damage over (%d+) sec",
     dot           = "([%d,]+)[%a%s]*damage over (%d+) sec",
-    range         = "([%d,]+) to ([%d,]+) damage",
+    range         = "([%d,]+) to ([%d,]+)[%a%s]*damage",
     direct        = "([%d,]+)[%a%s]*damage",
     heal          = "[Hh]eals? for ([%d,]+)",
 }
