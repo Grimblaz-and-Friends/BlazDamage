@@ -12,7 +12,7 @@ local addonName, BD = ...
 
 WoW passes the addon name string as the first vararg and a shared table as the second. `BD` is the shared namespace table — all modules attach themselves to it (`BD.Calculator`, `BD.defaults`, etc.).
 
-For Engine modules (loaded via `require()` in busted tests), the second vararg is nil — modules must guard with `BD = BD or {}` and `return` their module table for busted compatibility.
+For Engine modules (loaded via `require()` in busted tests), the second vararg is the filename string — modules must guard with `if type(BD) ~= "table" then BD = {} end` and `return` their module table for busted compatibility.
 
 ## Bootstrap Sequence
 
@@ -61,4 +61,4 @@ ADDON_LOADED fires for every addon, so the `name == addonName` guard is required
 - [ ] `/bd` and `/blazdamage` both print the current version
 - [ ] `BD.config` is non-nil after login
 - [ ] `BD.defaults` persists default values before config is loaded
-- [ ] Engine modules authored with the `BD = BD or {}` guard and `return Module` pass `require()` in busted tests
+- [ ] Engine modules authored with the `if type(BD) ~= "table" then BD = {} end` guard and `return Module` pass `require()` in busted tests

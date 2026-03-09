@@ -1,0 +1,29 @@
+# Enforce LF line endings for all text files regardless of platform autocrlf setting
+* text=auto eol=lf
+
+# Lua source files — always LF
+*.lua text eol=lf
+
+# Markdown — always LF
+*.md text eol=lf
+
+# YAML/JSON/TOML config
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.jsonc text eol=lf
+*.toml text eol=lf
+
+# WoW addon files
+*.toc text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.ps1 text eol=lf
+
+# Binary files — do not touch line endings
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.zip binary

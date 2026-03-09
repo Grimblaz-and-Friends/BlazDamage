@@ -48,8 +48,10 @@ This single question resolves most placement debates.
 ```lua
 -- UI → Engine (UI calls Engine for calculations)
 -- UI/OverlayRenderer.lua
-local Calculator = BD.Calculator
-local avg = Calculator.calculateAverage(baseValue, critChance, critMult, vers)  -- ✅ OK
+local result = Calculator.computeMetrics(
+    DescriptionParser.parse(description),
+    { critChance = critChance, critMult = critMult, castTime = castTime, gcd = gcd, resourceCost = resourceCost }
+)  -- ✅ OK
 
 -- UI → WoW API (UI wraps WoW API and passes plain values to Engine)
 -- UI/StatCollector.lua
@@ -86,8 +88,8 @@ hooksecurefunc("ActionButton_Update", fn)  -- ❌ Hook in Engine
 
 -- UI → Inline calculations (VIOLATION — duplicate Engine logic)
 -- UI/OverlayRenderer.lua
-local avg = baseValue * (1 + critChance * critMult) * (1 + vers)  -- ❌ Formula in UI
--- Should call: Calculator.calculateAverage(baseValue, critChance, critMult, vers)
+local avg = baseValue * (1 + critChance * (critMult - 1))  -- ❌ Formula in UI
+-- Should call: Calculator.computeMetrics(DescriptionParser.parse(description), stats)
 
 -- Global namespace pollution (VIOLATION — always use local)
 MyFunction = function() end  -- ❌ Global function
@@ -153,13 +155,17 @@ Every file uses the addon namespace pattern:
 
 ```lua
 local addonName, BD = ...
+if type(BD) ~= "table" then BD = {} end   -- busted passes filename as 2nd arg; WoW passes the BD table
 
 local Calculator = {}
 BD.Calculator = Calculator
 
-function Calculator.calculateAverage(base, critChance, critMult, vers)
-    return base * (1 + critChance * critMult) * (1 + vers)
+function Calculator.computeMetrics(parsedComponents, stats)
+    -- ... pure math, no WoW API ...
+    -- returns { components = {...}, totals = { avg = ..., dps = ... } }
 end
+
+return Calculator  -- needed for require() in busted
 ```
 
 ### Test File Pattern
@@ -168,21 +174,26 @@ end
 -- Tests/Calculator_spec.lua
 describe("Calculator", function()
     local Calculator
+    local DescriptionParser
 
     setup(function()
         -- Load the module under test
         Calculator = require("Engine.Calculator")
+        DescriptionParser = require("Engine.DescriptionParser")
     end)
 
-    describe("calculateAverage", function()
-        it("should return base value with zero crit and zero vers", function()
-            local result = Calculator.calculateAverage(100, 0, 0, 0)
-            assert.are.equal(100, result)
+    describe("computeMetrics", function()
+        it("returns nil when given no components", function()
+            local result = Calculator.computeMetrics(nil, { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 0 })
+            assert.is_nil(result)
         end)
 
-        it("should apply crit multiplier correctly", function()
-            local result = Calculator.calculateAverage(100, 0.25, 1.0, 0)
-            assert.are.near(125, result, 0.01)
+        it("applies the crit multiplier to direct damage", function()
+            local result = Calculator.computeMetrics(
+                DescriptionParser.parse("Deals 100 damage"),
+                { critChance = 0.25, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+            )
+            assert.are.near(125, result.totals.avg, 0.01)
         end)
     end)
 end)
@@ -206,7 +217,7 @@ When adding a new file, run through this checklist:
 ### Engine Layer
 
 - All Engine modules must have corresponding `*_spec.lua` tests in `Tests/`
-- Tests run via `busted Tests/` in standalone Lua 5.1 (not in WoW)
+- Tests run via `busted Tests/` (CI runtime: Lua 5.4.6 — busted 2.3.0 dropped Lua 5.1 support; WoW target is Lua 5.1; Engine code must remain 5.1-compatible; not run in WoW)
 - Engine tests must not require any WoW API stubs — if they do, the code under test is in the wrong layer
 
 ### UI Layer

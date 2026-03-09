@@ -4,7 +4,7 @@
 
 **Test the Engine exhaustively. Verify the UI manually.**
 
-The Engine layer (`Engine/`) is pure Lua — no WoW API, no frames, no state. It takes numbers in and returns numbers out. This makes it fully testable with busted in a standard Lua 5.1 environment, without WoW running.
+The Engine layer (`Engine/`) is pure Lua — no WoW API, no frames, no state. It takes numbers in and returns numbers out. This makes it fully testable with busted (Lua 5.4.6 CI runtime; WoW target is Lua 5.1 — Engine code must remain 5.1-compatible), without WoW running.
 
 The UI layer (`UI/`) is deeply integrated with WoW's runtime (frames, events, hooks). Mocking the WoW API for automated tests is costly and brittle. Manual in-game verification is more reliable and faster for this layer in v1.
 
@@ -32,13 +32,13 @@ Engine module (`Engine/Calculator.lua`):
 
 ```lua
 local _addonName, BD = ...
-BD = BD or {}  -- guard: BD is nil when loaded by busted
+if type(BD) ~= "table" then BD = {} end  -- busted passes filename string as 2nd vararg; WoW passes the BD table
 
 local Calculator = {}
 
-function Calculator.computeAverage(base, critChance, critMult, vers)
-    -- ... pure math ...
-    return result
+function Calculator.computeMetrics(parsedComponents, stats)
+    -- ... pure math, no WoW API ...
+    -- returns { components = {...}, totals = { avg = ..., dps = ... } }
 end
 
 BD.Calculator = Calculator
@@ -61,22 +61,26 @@ Example:
 -- Tests/Calculator_spec.lua
 describe("Calculator", function()
     local Calculator
+    local DescriptionParser
 
     setup(function()
         Calculator = require("Engine.Calculator")
+        DescriptionParser = require("Engine.DescriptionParser")
     end)
 
-    describe("computeAverage", function()
-        it("returns base value with zero crit and zero vers", function()
-            assert.are.equal(100, Calculator.computeAverage(100, 0, 0, 0))
+    describe("computeMetrics", function()
+        it("returns nil when given no components", function()
+            local result = Calculator.computeMetrics(nil, { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 0 })
+            assert.is_nil(result)
         end)
 
-        it("applies crit multiplier", function()
-            assert.near(125, Calculator.computeAverage(100, 0.25, 1.0, 0), 0.01)
-        end)
-
-        it("applies versatility", function()
-            assert.near(110, Calculator.computeAverage(100, 0, 0, 0.10), 0.01)
+        it("applies the crit multiplier", function()
+            local parsed = DescriptionParser.parse("Deals 1,000 damage over 8 sec")
+            local result = Calculator.computeMetrics(parsed, {
+                critChance = 0.25, critMult = 2.0,
+                castTime = 0, gcd = 1.5, resourceCost = 100
+            })
+            assert.are.equal(1250, result.totals.avg)
         end)
     end)
 end)
