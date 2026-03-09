@@ -9,4 +9,6 @@
 ## X-Note: Early development — skeleton only
 
 Config/Defaults.lua
+Engine/DescriptionParser.lua
+Engine/Calculator.lua
 Core.lua

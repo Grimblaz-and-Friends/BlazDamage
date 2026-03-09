@@ -14,5 +14,8 @@
   // Markdown formatter — keep authored emphasis and table style
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
-  }
+  },
+  "Lua.diagnostics.globals": [
+    "SlashCmdList"
+  ]
 }
