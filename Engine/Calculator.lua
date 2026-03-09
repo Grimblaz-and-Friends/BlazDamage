@@ -45,7 +45,7 @@ function Calculator.computeMetrics(parsedComponents, stats)
         elseif component.type == "dot" or component.type == "channel" then
             -- dot or channel: time-on-target = duration
             local dotDps = ((component.duration or 0) > 0)
-                           and (avg / component.duration) or nil
+                and (avg / component.duration) or nil
             comp.dotDps = dotDps
             if dotDps then
                 totalDps = (totalDps or 0) + dotDps

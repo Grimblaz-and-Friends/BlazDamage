@@ -8,7 +8,6 @@ describe("Calculator", function()
     end)
 
     describe("computeMetrics", function()
-
         -- stdStats: critChance=0.25, critMult=2.0 → multiplier = 1.25
         --           castTime=2.0 > gcd=1.5 → timeOnTarget = 2.0
         --           resourceCost=100
@@ -26,30 +25,30 @@ describe("Calculator", function()
         describe("average damage calculation", function()
             it("applies the crit-averaged multiplier: avg = baseValue * (1 + critChance * (critMult - 1))", function()
                 -- baseValue = (100+100)/2 = 100; multiplier = 1 + 0.25*1.0 = 1.25 → avg = 125
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
                 assert.are.equal(125, result.components[1].avg)
             end)
 
             it("returns baseValue unchanged when critChance is zero", function()
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=50}
-                local result = Calculator.computeMetrics({{min=200, max=200, type="direct"}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 50 }
+                local result = Calculator.computeMetrics({ { min = 200, max = 200, type = "direct" } }, stats)
                 assert.are.equal(200, result.components[1].avg)
             end)
 
             it("uses the midpoint of min and max as baseValue for a ranged component", function()
                 -- baseValue = (100+200)/2 = 150; critChance=0 → avg = 150
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=100, max=200, type="direct"}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 200, type = "direct" } }, stats)
                 assert.are.equal(150, result.components[1].avg)
             end)
 
             it("returns zero avg when both min and max are zero", function()
-                local result = Calculator.computeMetrics({{min=0, max=0, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 0, max = 0, type = "direct" } }, stdStats)
                 assert.are.equal(0, result.components[1].avg)
             end)
 
             it("avg field is a number even when base damage is zero", function()
-                local result = Calculator.computeMetrics({{min=0, max=0, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 0, max = 0, type = "direct" } }, stdStats)
                 assert.is_number(result.components[1].avg)
             end)
         end)
@@ -60,7 +59,7 @@ describe("Calculator", function()
         describe("DPS when castTime exceeds gcd", function()
             it("uses castTime as the divisor when castTime is longer than gcd", function()
                 -- avg=125, castTime=2.0 → dps = 125 / 2.0 = 62.5
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
                 assert.are.equal(62.5, result.components[1].dps)
             end)
         end)
@@ -71,8 +70,8 @@ describe("Calculator", function()
         describe("DPS with GCD floor for instant spells", function()
             it("uses gcd as the divisor when castTime is zero", function()
                 -- avg=150 (critChance=0), gcd=1.5 → dps = 150 / 1.5 = 100
-                local stats = {critChance=0, critMult=2.0, castTime=0, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=150, max=150, type="direct"}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 150, max = 150, type = "direct" } }, stats)
                 assert.are.equal(100, result.components[1].dps)
             end)
         end)
@@ -82,8 +81,8 @@ describe("Calculator", function()
         -- -----------------------------------------------------------------
         describe("DPS returns nil when time-on-target is zero", function()
             it("returns nil dps when both castTime and gcd are zero", function()
-                local stats = {critChance=0.25, critMult=2.0, castTime=0, gcd=0, resourceCost=100}
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stats)
+                local stats = { critChance = 0.25, critMult = 2.0, castTime = 0, gcd = 0, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
                 assert.is_nil(result.components[1].dps)
             end)
         end)
@@ -94,13 +93,13 @@ describe("Calculator", function()
         describe("DPSC", function()
             it("computes dpsc as avg divided by castTime", function()
                 -- avg=125, castTime=2.0 → dpsc = 62.5
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
                 assert.are.equal(62.5, result.components[1].dpsc)
             end)
 
             it("returns nil dpsc when castTime is zero", function()
-                local stats = {critChance=0.25, critMult=2.0, castTime=0, gcd=1.5, resourceCost=100}
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stats)
+                local stats = { critChance = 0.25, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
                 assert.is_nil(result.components[1].dpsc)
             end)
         end)
@@ -111,13 +110,13 @@ describe("Calculator", function()
         describe("DPM", function()
             it("computes dpm as avg divided by resourceCost", function()
                 -- avg=125, resourceCost=100 → dpm = 1.25
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stdStats)
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
                 assert.are.equal(1.25, result.components[1].dpm)
             end)
 
             it("returns nil dpm when resourceCost is zero", function()
-                local stats = {critChance=0.25, critMult=2.0, castTime=2.0, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, stats)
+                local stats = { critChance = 0.25, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
                 assert.is_nil(result.components[1].dpm)
             end)
         end)
@@ -128,20 +127,22 @@ describe("Calculator", function()
         describe("DoT component dotDps", function()
             it("computes dotDps as avg divided by duration", function()
                 -- avg=600 (critChance=0), duration=6 → dotDps = 100
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=600, max=600, type="dot", duration=6}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics(
+                    { { min = 600, max = 600, type = "dot", duration = 6 } }, stats)
                 assert.are.equal(100, result.components[1].dotDps)
             end)
 
             it("returns nil dotDps when duration is zero", function()
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=600, max=600, type="dot", duration=0}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics(
+                    { { min = 600, max = 600, type = "dot", duration = 0 } }, stats)
                 assert.is_nil(result.components[1].dotDps)
             end)
 
             it("returns nil dotDps when duration field is absent", function()
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=600, max=600, type="dot"}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 600, max = 600, type = "dot" } }, stats)
                 assert.is_nil(result.components[1].dotDps)
             end)
         end)
@@ -152,8 +153,9 @@ describe("Calculator", function()
         describe("channel component dotDps", function()
             it("computes dotDps as avg divided by duration for a channel type", function()
                 -- avg=400 (critChance=0), duration=4 → dotDps = 100
-                local stats = {critChance=0, critMult=2.0, castTime=0, gcd=1.5, resourceCost=0}
-                local result = Calculator.computeMetrics({{min=400, max=400, type="channel", duration=4}}, stats)
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 400, max = 400, type = "channel", duration = 4 } },
+                    stats)
                 assert.are.equal(100, result.components[1].dotDps)
             end)
         end)
@@ -167,8 +169,8 @@ describe("Calculator", function()
         -- -----------------------------------------------------------------
         describe("multi-component totals", function()
             local mixedComponents = {
-                {min=100, max=100, type="direct"},
-                {min=600, max=600, type="dot", duration=6},
+                { min = 100, max = 100, type = "direct" },
+                { min = 600, max = 600, type = "dot", duration = 6 },
             }
 
             it("totals.avg is the sum of all component avg values", function()
@@ -197,7 +199,7 @@ describe("Calculator", function()
             end)
 
             it("returns nil when stats is nil", function()
-                local result = Calculator.computeMetrics({{min=100, max=100, type="direct"}}, nil)
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, nil)
                 assert.is_nil(result)
             end)
         end)
@@ -206,7 +208,7 @@ describe("Calculator", function()
         -- Return structure invariants
         -- -----------------------------------------------------------------
         describe("return structure invariants", function()
-            local singleDirect = {{min=100, max=100, type="direct"}}
+            local singleDirect = { { min = 100, max = 100, type = "direct" } }
 
             it("returns a non-nil result for valid input", function()
                 local result = Calculator.computeMetrics(singleDirect, stdStats)
@@ -239,16 +241,15 @@ describe("Calculator", function()
 
             it("totals.avg equals the sum of all component avg values", function()
                 -- critChance=0 → avg equals baseValue exactly
-                local stats = {critChance=0, critMult=2.0, castTime=1.5, gcd=1.5, resourceCost=0}
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 0 }
                 local multi = {
-                    {min=100, max=100, type="direct"},
-                    {min=200, max=200, type="direct"},
+                    { min = 100, max = 100, type = "direct" },
+                    { min = 200, max = 200, type = "direct" },
                 }
                 local result = Calculator.computeMetrics(multi, stats)
                 assert.are.equal(300, result.totals.avg)
             end)
         end)
-
     end)
 
     -- -----------------------------------------------------------------

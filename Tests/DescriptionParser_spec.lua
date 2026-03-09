@@ -8,7 +8,6 @@ describe("DescriptionParser", function()
     end)
 
     describe("parse", function()
-
         -- -----------------------------------------------------------------
         -- Single-hit direct damage
         -- -----------------------------------------------------------------
@@ -148,6 +147,16 @@ describe("DescriptionParser", function()
 
             it("captures the channel duration in seconds", function()
                 local result = DescriptionParser.parse("Channels 3,000 damage over 4 sec")
+                assert.are.equal(4, result[1].duration)
+            end)
+
+            it("handles a school-labeled channel description", function()
+                local result = DescriptionParser.parse("Channels 3,000 Fire damage over 4 sec")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("channel", result[1].type)
+                assert.are.equal(3000, result[1].min)
+                assert.are.equal(3000, result[1].max)
                 assert.are.equal(4, result[1].duration)
             end)
         end)
@@ -321,8 +330,8 @@ describe("DescriptionParser", function()
                     { desc = "Deals 1,234 Fire damage",          has_duration = false },
                     { desc = "1,000 to 2,000 damage",            has_duration = false },
                     { desc = "Heals for 2,500",                  has_duration = false },
-                    { desc = "Deals 5,000 damage over 12 sec",   has_duration = true  },
-                    { desc = "Channels 3,000 damage over 4 sec", has_duration = true  },
+                    { desc = "Deals 5,000 damage over 12 sec",   has_duration = true },
+                    { desc = "Channels 3,000 damage over 4 sec", has_duration = true },
                 }
                 for _, case in ipairs(cases) do
                     local result = DescriptionParser.parse(case.desc)
@@ -349,6 +358,5 @@ describe("DescriptionParser", function()
                 end
             end)
         end)
-
     end) -- describe("parse")
-end) -- describe("DescriptionParser")
+end)     -- describe("DescriptionParser")
