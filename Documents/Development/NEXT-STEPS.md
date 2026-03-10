@@ -1,28 +1,27 @@
 # Next Steps
 
-## Current Milestone: Issue #1 — Repository Infrastructure
+## Completed: Issue #6 — UI Foundation
 
-Setting up the project foundation before feature work begins:
+The UI Foundation layer is now fully implemented:
 
-- Root config files (`.luacheckrc`, `.editorconfig`, `.markdownlint.jsonc`)
-- Loadable addon skeleton (`BlazDamage.toc`, `Core.lua`, `Config/Defaults.lua`)
-- Architecture validation script and CI workflow
-- Documentation (Vision, Architecture, ADRs, etc.)
-- GitHub labels
+- `UI/StatCollector.lua` — collects crit, haste, mastery, versatility, spell power from WoW API
+- `UI/EventHandler.lua` — registers and routes `UNIT_AURA`, `PLAYER_EQUIPMENT_CHANGED`, and related events
+- `Engine/StatFormulas.lua` — pure Lua stat math (average, effective crit multiplier)
 
-See [Issue #1](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/1) for full status.
+See [Issue #6](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/6) for full details.
 
 ## Immediate Next Actions
 
-Once Issue #1 is complete, work begins on:
+With the Engine and UI Foundation in place, the remaining v1 features can now be built:
 
-1. **[Issue #2 — BlazDamage v1 Feature Implementation](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/2)**
-   - Description parser (`Engine/DescriptionParser.lua`)
-   - Stat collector (`UI/StatCollector.lua`)
-   - Damage calculator (`Engine/Calculator.lua`)
-   - Actionbar discovery and overlay renderer (`UI/`)
-   - Tooltip enricher (`UI/`)
+1. **[Issue #7 — Actionbar Overlays](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/7)**
+   - Overlay renderer attached to actionbar buttons
+   - Reads `StatCollector` + `Calculator` to display damage metrics per slot
+
+2. **[Issue #8 — Tooltip Enrichment](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/8)**
+   - Hook `GameTooltip` to append calculated DPS/avg/DPSC lines
+   - Works in spellbook and on actionbar buttons
 
 ## Blocked By
 
-- Issue #2 is blocked on Issue #1 completion
+- Issue #7 and #8 have no remaining blockers

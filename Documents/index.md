@@ -19,3 +19,6 @@
 ## Design Documents
 
 - [Design Documents Policy](Design/README.md) — What lives here and how to maintain it
+- [Addon Skeleton](Design/addon-skeleton.md) — TOC structure, Core.lua namespace, SavedVariables
+- [Engine Core](Design/engine-core.md) — DescriptionParser, Calculator, StatFormulas design
+- [UI Foundation](Design/ui-foundation.md) — StatCollector, EventHandler, event model
