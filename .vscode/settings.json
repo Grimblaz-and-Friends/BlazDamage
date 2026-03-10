@@ -11,6 +11,10 @@
   "powershell.codeFormatting.useConstantStrings": false,
   "powershell.codeFormatting.openBraceOnSameLine": true,
   "powershell.codeFormatting.newLineAfterOpenBrace": true,
+  // Lua — no auto-formatter; style governed by .editorconfig and copilot-instructions.md conventions
+  "[lua]": {
+    "editor.formatOnSave": false
+  },
   // Markdown formatter — keep authored emphasis and table style
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
