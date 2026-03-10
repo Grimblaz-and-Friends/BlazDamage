@@ -1,5 +1,7 @@
 {
   "editor.formatOnSave": true,
+  // Always write LF — overrides Windows CRLF default; keeps files clean after agent writes or formatter runs
+  "files.eol": "\n",
   "files.exclude": {
     "**/.git": true
   },
