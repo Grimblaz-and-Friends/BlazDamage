@@ -47,5 +47,13 @@ describe("StatFormulas", function()
         it("converts 100% crit to 1.0 fraction", function()
             assert.are.equal(1.0, StatFormulas.critToFraction(100))
         end)
+
+        it("clamps to 1.0 at exactly 100 (boundary)", function()
+            assert.are.equal(1.0, StatFormulas.critToFraction(100))
+        end)
+
+        it("clamps to 1.0 for input above 100", function()
+            assert.are.equal(1.0, StatFormulas.critToFraction(150))
+        end)
     end)
 end)

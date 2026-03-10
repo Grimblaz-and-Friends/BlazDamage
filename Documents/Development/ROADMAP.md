@@ -9,7 +9,7 @@ Ship correct values for the most common cases before expanding coverage. A relia
 **Goal**: Display accurate damage metrics on actionbar buttons for direct-damage spells.
 
 - [x] Description parser — extract min/max from `C_Spell.GetSpellDescription()`
-- [x] Stat collector — crit, haste, mastery, versatility, spell power
+- [x] Stat collector — crit, haste, computed GCD (mastery/versatility/spell power are pre-embedded in description text)
 - [x] Damage calculator — average, DPS, DPSC, DPM
 - [x] Event-driven updates (gear swap, buff change, action slot change)
 - [ ] Actionbar overlay renderer (Issue #7)

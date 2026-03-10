@@ -22,6 +22,7 @@ function StatCollector.getPlayerStats()
 end
 
 function StatCollector.getSpellStats(spellID)
+    if spellID == nil then return nil end
     local cached = spellCache[spellID]
     if cached ~= nil then
         -- false = cached nil result (invalid spellID); return nil

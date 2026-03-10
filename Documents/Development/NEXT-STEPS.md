@@ -4,9 +4,9 @@
 
 The UI Foundation layer is now fully implemented:
 
-- `UI/StatCollector.lua` — collects crit, haste, mastery, versatility, spell power from WoW API
+- `UI/StatCollector.lua` — collects `critChance`, `haste`, and computed `gcd` from the WoW API; `critMult` is a 2.0 constant; mastery, versatility, and spell power are not gathered from the API
 - `UI/EventHandler.lua` — registers and routes `UNIT_AURA`, `PLAYER_EQUIPMENT_CHANGED`, and related events
-- `Engine/StatFormulas.lua` — pure Lua stat math (average, effective crit multiplier)
+- `Engine/StatFormulas.lua` — pure Lua stat math (`computeGcd`, `critToFraction`)
 
 See [Issue #6](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/6) for full details.
 

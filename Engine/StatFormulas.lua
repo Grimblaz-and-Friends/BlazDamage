@@ -17,9 +17,9 @@ end
 
 --- Converts a crit percentage into a decimal fraction.
 -- @param critPercent  numeric crit percentage (e.g. 25 for 25%)
--- @return fraction in [0, 1]
+-- @return fraction in [0, 1]; clamped to 1.0 for inputs > 100
 function StatFormulas.critToFraction(critPercent)
-    return critPercent / 100
+    return math.min(1.0, critPercent / 100)
 end
 
 BD.StatFormulas = StatFormulas

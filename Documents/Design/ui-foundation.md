@@ -79,13 +79,13 @@ Eight events are registered at module load time:
 | `PLAYER_ENTERING_WORLD`      | Initial stat load on login/reload                          |
 | `ACTIONBAR_SLOT_CHANGED`     | Spell changed on actionbar                                 |
 | `PLAYER_EQUIPMENT_CHANGED`   | Gear change (may affect stats)                             |
-| `UNIT_AURA`                  | Buff/debuff change (filtered: player only)                 |
+| `UNIT_AURA`                  | Buff/debuff change (player-only via `RegisterUnitEvent`)   |
 | `COMBAT_RATING_UPDATE`       | Stat rating change                                         |
 | `PLAYER_TARGET_CHANGED`      | Target change (for future overlay use)                     |
 | `PLAYER_TALENT_UPDATE`       | Talent point assignment change                             |
 | `ACTIVE_TALENT_GROUP_CHANGED` | Active specialization switched                            |
 
-`UNIT_AURA` is filtered: events where `unit ~= "player"` are ignored.
+`UNIT_AURA` is pre-filtered at the API level via `frame:RegisterUnitEvent("UNIT_AURA", "player")`. The `OnEvent` callback receives no `unit` parameter and performs no in-handler unit guard.
 
 ### Throttle Mechanism
 
