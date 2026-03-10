@@ -52,6 +52,8 @@ The repository is flat Lua — no build step required. Open the folder in VS Cod
 
 Recommended extensions are listed in `.vscode/extensions.json`.
 
+**WoW API stubs**: `.vscode/settings.json` references `ketho.wow-api-0.22.3` for Lua Language Server WoW API completions. If your installed version differs, update the `Lua.workspace.library` path accordingly.
+
 ## Running Tests
 
 Unit tests live in `Tests/` and run in standalone Lua via busted (no WoW required):

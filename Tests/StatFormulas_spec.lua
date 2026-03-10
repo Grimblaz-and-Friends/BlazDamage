@@ -30,6 +30,14 @@ describe("StatFormulas", function()
         it("returns a value greater than 1.5 with negative haste (slower than base)", function()
             assert.is_true(StatFormulas.computeGcd(-50) > 1.5)
         end)
+
+        it("returns 1.5 base GCD for hastePercent at exactly -100 (denominator zero)", function()
+            assert.are.equal(1.5, StatFormulas.computeGcd(-100))
+        end)
+
+        it("treats nil hastePercent as 0", function()
+            assert.are.equal(1.5, StatFormulas.computeGcd(nil))
+        end)
     end)
 
     -- -----------------------------------------------------------------
@@ -54,6 +62,10 @@ describe("StatFormulas", function()
 
         it("clamps to 1.0 for input above 100", function()
             assert.are.equal(1.0, StatFormulas.critToFraction(150))
+        end)
+
+        it("clamps to 0.0 for negative input", function()
+            assert.are.equal(0.0, StatFormulas.critToFraction(-10))
         end)
     end)
 end)
