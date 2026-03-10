@@ -1,5 +1,7 @@
 {
   "editor.formatOnSave": true,
+  // Always write LF — overrides Windows CRLF default; keeps files clean after agent writes or formatter runs
+  "files.eol": "\n",
   "files.exclude": {
     "**/.git": true
   },
@@ -11,11 +13,31 @@
   "powershell.codeFormatting.useConstantStrings": false,
   "powershell.codeFormatting.openBraceOnSameLine": true,
   "powershell.codeFormatting.newLineAfterOpenBrace": true,
+  // Lua — no auto-formatter; style governed by .editorconfig and copilot-instructions.md conventions
+  "[lua]": {
+    "editor.formatOnSave": false
+  },
   // Markdown formatter — keep authored emphasis and table style
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   },
   "Lua.diagnostics.globals": [
     "SlashCmdList"
+  ],
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.runtime.builtin": {
+    "basic":   "enable",
+    "math":    "enable",
+    "string":  "enable",
+    "table":   "enable",
+    "utf8":    "enable",
+    "debug":   "disable",
+    "io":      "disable",
+    "os":      "disable",
+    "package": "disable"
+  },
+  "Lua.workspace.library": [
+    // Update this path to match your installed ketho.wow-api version (see QUICK-START.md)
+    "~\\.vscode\\extensions\\ketho.wow-api-0.22.3\\Annotations\\Core"
   ]
 }

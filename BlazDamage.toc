@@ -11,4 +11,7 @@
 Config/Defaults.lua
 Engine/DescriptionParser.lua
 Engine/Calculator.lua
+Engine/StatFormulas.lua
+UI/StatCollector.lua
+UI/EventHandler.lua
 Core.lua
