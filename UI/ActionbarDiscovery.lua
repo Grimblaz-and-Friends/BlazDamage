@@ -6,6 +6,7 @@ if type(BD) ~= "table" then BD = {} end
 
 local ActionbarDiscovery = {}
 
+local PREFIX = "|cFFFFFF00BlazDamage:|r"
 local initialized = false
 
 local function scanDefaultButtons()
@@ -31,7 +32,7 @@ local function initAuto()
         BD.OverlayRenderer.attachOverlay(button)
     end)
     if not ok then
-        print("|cFFFFFF00BlazDamage:|r Auto discovery failed. Try /bd discovery update and /reload")
+        print(PREFIX .. " Auto discovery failed. Try /bd discovery update and /reload")
     end
     -- Also scan known buttons immediately (handles already-registered buttons at PLAYER_ENTERING_WORLD)
     scanDefaultButtons()
@@ -42,7 +43,7 @@ local function initUpdate()
         BD.OverlayRenderer.attachOverlay(button)
     end)
     if not ok then
-        print("|cFFFFFF00BlazDamage:|r Update discovery failed. Try /bd discovery auto and /reload")
+        print(PREFIX .. " Update discovery failed. Try /bd discovery auto and /reload")
     end
     scanDefaultButtons()
 end

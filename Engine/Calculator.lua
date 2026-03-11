@@ -72,7 +72,7 @@ function Calculator.formatNumber(value)
     elseif abs >= 1000 then
         return string.format("%.1fk", value / 1000)
     else
-        return string.format("%d", value)
+        return string.format("%.0f", value)
     end
 end
 

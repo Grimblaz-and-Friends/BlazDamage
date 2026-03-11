@@ -90,6 +90,7 @@ function OverlayRenderer.refreshAll()
 end
 
 function OverlayRenderer.refreshSlot(slot)
+    if BD.config and BD.config.showOverlays == false then return end
     local button = slotToButton[slot]
     if button then
         local entry = trackedButtons[button]

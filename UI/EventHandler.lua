@@ -45,7 +45,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
         setDirty()
     elseif event == "ACTIONBAR_SLOT_CHANGED" then
         local slot = ...
-        BD.StatCollector.refresh()
         if slot == 0 then
             BD.OverlayRenderer.refreshAll()
         else
