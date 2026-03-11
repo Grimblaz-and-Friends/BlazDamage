@@ -65,5 +65,24 @@ function Calculator.computeMetrics(parsedComponents, stats)
     }
 end
 
+function Calculator.formatNumber(value)
+    local abs = math.abs(value)
+    if abs >= 999950 then
+        return string.format("%.1fM", value / 1000000)
+    elseif abs >= 1000 then
+        return string.format("%.1fk", value / 1000)
+    else
+        return string.format("%d", value)
+    end
+end
+
+-- Returns result.totals[metricName]. Note: "dpsc" and "dpm" return nil until issue #25 aggregates them into totals.
+function Calculator.resolveMetric(result, metricName)
+    if result == nil then return nil end
+    if result.totals == nil then return nil end
+    if metricName == nil then return nil end
+    return result.totals[metricName]
+end
+
 BD.Calculator = Calculator
 return Calculator

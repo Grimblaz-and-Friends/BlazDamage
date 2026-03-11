@@ -299,3 +299,74 @@ describe("Calculator", function()
         end)
     end)
 end)
+
+-- =============================================================================
+-- formatNumber
+-- =============================================================================
+describe("formatNumber", function()
+    setup(function()
+        Calculator = require("Engine.Calculator")
+    end)
+
+    -- Table-driven boundary cases
+    local cases = {
+        { input = 0,       expected = "0" },
+        { input = 999,     expected = "999" },
+        { input = 1000,    expected = "1.0k" },
+        { input = 1500,    expected = "1.5k" },
+        { input = 14523,   expected = "14.5k" },
+        { input = 999949,  expected = "999.9k" },
+        { input = 999950,  expected = "1.0M" },
+        { input = 1000000, expected = "1.0M" },
+        { input = 1500000, expected = "1.5M" },
+        { input = -1500,   expected = "-1.5k" },
+    }
+
+    for _, case in ipairs(cases) do
+        local input, expected = case.input, case.expected
+        it("formats " .. tostring(input) .. " as '" .. expected .. "'", function()
+            assert.are.equal(expected, Calculator.formatNumber(input))
+        end)
+    end
+end)
+
+-- =============================================================================
+-- resolveMetric
+-- =============================================================================
+describe("resolveMetric", function()
+    setup(function()
+        Calculator = require("Engine.Calculator")
+    end)
+
+    it("returns nil when result is nil", function()
+        assert.is_nil(Calculator.resolveMetric(nil, "avg"))
+    end)
+
+    it("returns the value at the named key in result.totals", function()
+        -- ARRANGE
+        local result = { totals = { avg = 500 } }
+        -- ACT / ASSERT
+        assert.are.equal(500, Calculator.resolveMetric(result, "avg"))
+    end)
+
+    it("returns a float dps value from result.totals", function()
+        -- ARRANGE
+        local result = { totals = { dps = 1234.5 } }
+        -- ACT / ASSERT
+        assert.are.equal(1234.5, Calculator.resolveMetric(result, "dps"))
+    end)
+
+    it("returns nil when the requested metric key is absent from totals", function()
+        -- ARRANGE
+        local result = { totals = { avg = 500 } }
+        -- ACT / ASSERT
+        assert.is_nil(Calculator.resolveMetric(result, "dps"))
+    end)
+
+    it("returns nil when metricName is nil", function()
+        -- ARRANGE
+        local result = { totals = { avg = 500 } }
+        -- ACT / ASSERT
+        assert.is_nil(Calculator.resolveMetric(result, nil))
+    end)
+end)

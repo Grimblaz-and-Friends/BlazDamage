@@ -13,7 +13,8 @@
 ## Architecture Decisions
 
 - [API-First: No Manual Spell Data](Decisions/2026-03-02-api-first-no-manual-spell-data.md)
-- [Addon-Agnostic Actionbar Discovery](Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md)
+- [Addon-Agnostic Actionbar Discovery](Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md) *(superseded)*
+- [Switchable Actionbar Discovery Strategy](Decisions/2026-03-10-switchable-actionbar-discovery.md)
 - [Class-Agnostic Calculation Engine](Decisions/2026-03-02-class-agnostic-calculation-engine.md)
 
 ## Design Documents
@@ -22,3 +23,4 @@
 - [Addon Skeleton](Design/addon-skeleton.md) — TOC structure, Core.lua namespace, SavedVariables
 - [Engine Core](Design/engine-core.md) — DescriptionParser, Calculator, StatFormulas design
 - [UI Foundation](Design/ui-foundation.md) — StatCollector, EventHandler, event model
+- [Actionbar Overlays](Design/actionbar-overlays.md) — Overlay renderer, discovery modes, data flow pipeline

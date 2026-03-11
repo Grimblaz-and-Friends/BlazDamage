@@ -2,7 +2,7 @@
 
 **Date**: 2026-03-02  
 **Issue**: [#1 — Project Bootstrap](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/1)  
-**Status**: Approved
+**Status**: Superseded by [2026-03-10-switchable-actionbar-discovery.md](2026-03-10-switchable-actionbar-discovery.md)
 
 ## Context
 
