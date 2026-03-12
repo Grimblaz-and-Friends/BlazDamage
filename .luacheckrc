@@ -36,11 +36,13 @@ stds.wow = {
         "UnitStat",
         "UnitLevel",
         -- Action functions
+        "ActionBarButtonEventsFrame_RegisterFrame",
         "GetActionInfo",
         "HasAction",
         "IsUsableAction",
         -- Frame / UI
         "CreateFrame",
+        "NumberFontNormalSmall",
         "UIParent",
         "GameTooltip",
         "InterfaceOptionsFrame",

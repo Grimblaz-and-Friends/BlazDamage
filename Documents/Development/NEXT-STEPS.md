@@ -10,18 +10,22 @@ The UI Foundation layer is now fully implemented:
 
 See [Issue #6](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/6) for full details.
 
+## Completed: Issue #7 — Actionbar Overlays
+
+- `UI/OverlayRenderer.lua` — attaches FontString overlays to actionbar buttons, refreshes via throttled stat cycle or immediate slot update
+- `UI/ActionbarDiscovery.lua` — discovers buttons via `ActionBarButtonEventsFrame_RegisterFrame` (auto mode) or `ActionButton_Update` (update mode), with `scanDefaultButtons()` at init
+- `BD.config.discoveryMode` SavedVariable controls discovery strategy (`"auto"` default)
+
+See [Issue #7](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/7) and the [Actionbar Overlays design doc](../../Documents/Design/actionbar-overlays.md) for full details.
+
 ## Immediate Next Actions
 
-With the Engine and UI Foundation in place, the remaining v1 features can now be built:
+With overlays in place, the remaining v1 feature is:
 
-1. **[Issue #7 — Actionbar Overlays](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/7)**
-   - Overlay renderer attached to actionbar buttons
-   - Reads `StatCollector` + `Calculator` to display damage metrics per slot
-
-2. **[Issue #8 — Tooltip Enrichment](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/8)**
+1. **[Issue #8 — Tooltip Enrichment](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/8)**
    - Hook `GameTooltip` to append calculated DPS/avg/DPSC lines
    - Works in spellbook and on actionbar buttons
 
 ## Blocked By
 
-- Issue #7 and #8 have no remaining blockers
+- Issue #8 has no remaining blockers

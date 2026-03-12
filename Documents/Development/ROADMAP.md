@@ -12,7 +12,7 @@ Ship correct values for the most common cases before expanding coverage. A relia
 - [x] Stat collector — crit, haste, computed GCD (mastery/versatility/spell power are pre-embedded in description text)
 - [x] Damage calculator — average, DPS, DPSC, DPM
 - [x] Event-driven updates (gear swap, buff change, action slot change)
-- [ ] Actionbar overlay renderer (Issue #7)
+- [x] Actionbar overlay renderer (Issue #7)
 - [ ] Tooltip enrichment — spellbook + actionbar (Issue #8)
 - [ ] Manual verification with 3+ specs
 

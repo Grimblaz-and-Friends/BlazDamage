@@ -15,6 +15,7 @@ local function onUpdate(self, dt)
     elapsed = elapsed + dt
     if elapsed >= THROTTLE and dirty then
         BD.StatCollector.refresh()
+        BD.OverlayRenderer.refreshAll()
         dirty = false
         elapsed = 0
         frame:SetScript("OnUpdate", nil)  -- unregister when not dirty
@@ -38,6 +39,18 @@ frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 frame:RegisterEvent("PLAYER_TALENT_UPDATE")
 frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-frame:SetScript("OnEvent", function(self, event)
-    setDirty()
+frame:SetScript("OnEvent", function(self, event, ...)
+    if event == "PLAYER_ENTERING_WORLD" then
+        BD.ActionbarDiscovery.init()
+        setDirty()
+    elseif event == "ACTIONBAR_SLOT_CHANGED" then
+        local slot = ...
+        if slot == 0 then
+            BD.OverlayRenderer.refreshAll()
+        else
+            BD.OverlayRenderer.refreshSlot(slot)
+        end
+    else
+        setDirty()
+    end
 end)
