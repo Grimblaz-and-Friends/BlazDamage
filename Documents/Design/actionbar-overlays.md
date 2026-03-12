@@ -22,21 +22,21 @@ For each tracked actionbar button, each refresh cycle:
 
 ## OverlayRenderer API
 
-**`BD.OverlayRenderer.attachOverlay(button)`**  
+**`BD.OverlayRenderer.attachOverlay(button)`**
 Attaches a FontString overlay to a button frame. Idempotent — no-op if already attached. Anchored `BOTTOMRIGHT(-2, 2)`, font `NumberFontNormalSmall`, color white.
 
-**`BD.OverlayRenderer.refreshAll()`**  
+**`BD.OverlayRenderer.refreshAll()`**
 Refreshes all tracked buttons. Hides all overlays if `BD.config.showOverlays == false`.
 
-**`BD.OverlayRenderer.refreshSlot(slot)`**  
+**`BD.OverlayRenderer.refreshSlot(slot)`**
 Refreshes the single button mapped to a specific actionbar slot. Used for immediate `ACTIONBAR_SLOT_CHANGED` updates.
 
 ## ActionbarDiscovery API
 
-**`BD.ActionbarDiscovery.init()`**  
+**`BD.ActionbarDiscovery.init()`**
 Idempotent. Runs once per session on `PLAYER_ENTERING_WORLD`. Reads `BD.config.discoveryMode` and dispatches to `initAuto()` or `initUpdate()`. Both modes call `scanDefaultButtons()` at init time.
 
-**Discovery Modes**  
+**Discovery Modes**
 See [2026-03-10-switchable-actionbar-discovery.md](../Decisions/2026-03-10-switchable-actionbar-discovery.md).
 
 ## EventHandler Integration
@@ -64,5 +64,5 @@ Handled by `Calculator.formatNumber(value)`:
 
 ## Data Structures
 
-**`trackedButtons`** (OverlayRenderer module-local): `button frame → { overlay, slot }` — main tracking table.  
+**`trackedButtons`** (OverlayRenderer module-local): `button frame → { overlay, slot }` — main tracking table.
 **`slotToButton`** (OverlayRenderer module-local): `slot number → button frame` — reverse index for `refreshSlot`.

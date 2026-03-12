@@ -1,7 +1,7 @@
 # Switchable Actionbar Discovery Strategy
 
-**Date**: 2026-03-10  
-**Status**: Approved  
+**Date**: 2026-03-10
+**Status**: Approved
 **Supersedes**: [2026-03-02-addon-agnostic-actionbar-discovery.md](2026-03-02-addon-agnostic-actionbar-discovery.md)
 
 ## Context

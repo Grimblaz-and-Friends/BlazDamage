@@ -1,0 +1,21 @@
+#!/bin/sh
+# Pre-commit hook: strip trailing whitespace from staged files.
+# Configured via: git config core.hooksPath .githooks
+
+# Get list of staged files (added, copied, modified — not deleted)
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$staged" ]; then
+    exit 0
+fi
+
+for file in $staged; do
+    # Only process text files that exist
+    if [ -f "$file" ]; then
+        # Strip trailing whitespace in-place
+        sed -i 's/[[:space:]]*$//' "$file"
+        git add "$file"
+    fi
+done
+
+exit 0
