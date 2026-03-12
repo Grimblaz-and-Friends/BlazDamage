@@ -10,11 +10,11 @@ if [ -z "$staged" ]; then
 fi
 
 for file in $staged; do
-    # Only process text files that exist
+    # Only process files that exist
     if [ -f "$file" ]; then
-        # Strip trailing whitespace in-place
-        sed -i 's/[[:space:]]*$//' "$file"
-        git add "$file"
+        mode=$(git ls-files -s -- "$file" | cut -d' ' -f1)
+        hash=$(git show :"$file" | sed 's/[[:space:]]*$//' | git hash-object -w --stdin) || exit 1
+        git update-index --cacheinfo "${mode},${hash},${file}"
     fi
 done
 
