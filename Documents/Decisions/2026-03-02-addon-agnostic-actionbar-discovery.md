@@ -1,7 +1,7 @@
 # Addon-Agnostic Actionbar Discovery via `ActionBarButtonMixin`
 
-**Date**: 2026-03-02  
-**Issue**: [#1 — Project Bootstrap](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/1)  
+**Date**: 2026-03-02
+**Issue**: [#1 — Project Bootstrap](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/1)
 **Status**: Superseded by [2026-03-10-switchable-actionbar-discovery.md](2026-03-10-switchable-actionbar-discovery.md)
 
 ## Context
@@ -26,19 +26,19 @@ against each addon's release cycle independently. This is unsustainable for a sm
 ### 1. Hook `ActionButton_Update` Generically
 
 **Choice**: Use `hooksecurefunc("ActionButton_Update", callback)` to be notified whenever any ActionButton
-updates, regardless of which addon created it.  
+updates, regardless of which addon created it.
 **Rationale**: This makes BlazDamage automatically compatible with any actionbar addon that reuses the standard
 ActionButton frame template, which nearly all do. The hook receives the button frame as its argument, allowing
-overlay attachment without caring about the button's origin.  
+overlay attachment without caring about the button's origin.
 **Impact**: No per-addon compatibility modules are needed. Overlay attachment logic remains in a single place.
 New actionbar addons that follow the standard template are supported automatically on first load.
 
 ### 2. No Per-Addon Compatibility Shims
 
-**Choice**: Do not write Bartender4-specific, ElvUI-specific, or Dominos-specific detection code.  
+**Choice**: Do not write Bartender4-specific, ElvUI-specific, or Dominos-specific detection code.
 **Rationale**: Third-party addons evolve independently. Per-addon code breaks silently when the target addon
 updates its internal frame structure. The generic hook approach means BlazDamage continues working even when
-Bartender4 releases a major update that renames its internal frames.  
+Bartender4 releases a major update that renames its internal frames.
 **Impact**: If an actionbar addon uses a completely non-standard frame that does not call `ActionButton_Update`,
 those buttons will not show overlays. This is acceptable (graceful degradation) and is documented as a known
 limitation. Users on exotic bar addons are advised to report compatibility issues so the hook strategy can be

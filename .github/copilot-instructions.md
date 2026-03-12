@@ -139,6 +139,10 @@ luacheck . && pwsh .github/scripts/validate-architecture.ps1 && busted Tests/
 critic_passes: 3
 ```
 
+## Formatting
+
+- **No trailing whitespace**: `.editorconfig` enforces `trim_trailing_whitespace = true`. Never use markdown trailing-space line breaks (`  `). Use actual newlines instead. A pre-commit hook (`.githooks/pre-commit`) auto-strips trailing whitespace as a safety net.
+
 ## Related Documentation
 
 - Architecture Rules: `.github/architecture-rules.md`
