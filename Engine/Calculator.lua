@@ -14,7 +14,7 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 -- Computes per-component and aggregate metrics from parsed spell components.
 --
 -- parsedComponents: array of {min, max, type, duration?}  (nil/empty → returns nil)
--- stats:            {critChance, critMult, castTime, gcd, resourceCost}
+-- stats:            {critChance, critMult, castTime, gcd, resourceCost?}  -- resourceCost nil treated as 0 (free spells)
 --
 -- Returns { components = {...}, totals = { avg, dps } }
 function Calculator.computeMetrics(parsedComponents, stats)
@@ -38,7 +38,7 @@ function Calculator.computeMetrics(parsedComponents, stats)
             local dps = (timeOnTarget > 0) and (avg / timeOnTarget) or nil
             comp.dps  = dps
             comp.dpsc = (stats.castTime > 0) and (avg / stats.castTime) or nil
-            comp.dpm  = (stats.resourceCost > 0) and (avg / stats.resourceCost) or nil
+            comp.dpm  = (stats.resourceCost ~= nil and stats.resourceCost > 0) and (avg / stats.resourceCost) or nil
             if dps then
                 totalDps = (totalDps or 0) + dps
             end
@@ -56,11 +56,17 @@ function Calculator.computeMetrics(parsedComponents, stats)
         outputComponents[#outputComponents + 1] = comp
     end
 
+    local totalDpsc = (stats.castTime > 0) and (totalAvg / stats.castTime) or nil
+    local totalDpm  = (stats.resourceCost ~= nil and stats.resourceCost > 0)
+                      and (totalAvg / stats.resourceCost) or nil
+
     return {
         components = outputComponents,
         totals = {
-            avg = totalAvg,
-            dps = totalDps,
+            avg  = totalAvg,
+            dps  = totalDps,
+            dpsc = totalDpsc,
+            dpm  = totalDpm,
         },
     }
 end
@@ -76,7 +82,7 @@ function Calculator.formatNumber(value)
     end
 end
 
--- Returns result.totals[metricName]. Note: "dpsc" and "dpm" return nil until issue #25 aggregates them into totals.
+-- Returns result.totals[metricName], or nil if result or totals is nil.
 function Calculator.resolveMetric(result, metricName)
     if result == nil then return nil end
     if result.totals == nil then return nil end
