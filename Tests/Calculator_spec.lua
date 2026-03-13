@@ -185,6 +185,95 @@ describe("Calculator", function()
         end)
 
         -- -----------------------------------------------------------------
+        -- Totals dpsc and dpm (all component types)
+        -- -----------------------------------------------------------------
+        describe("totals dpsc and dpm", function()
+            it("direct-only: totals.dpm and totals.dpsc computed from totalAvg", function()
+                -- avg = 100 * (1 + 0.25 * 1.0) = 125; resourceCost=100 → dpm=1.25; castTime=2.0 → dpsc=62.5
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
+                assert.are.equal(1.25, result.totals.dpm)
+                assert.are.equal(62.5, result.totals.dpsc)
+            end)
+
+            it("dot-only: totals.dpm and totals.dpsc computed from totalAvg", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                -- avg=600 (no crit), totalAvg=600 → dpm=6.0, dpsc=300.0
+                local result = Calculator.computeMetrics(
+                    { { min = 600, max = 600, type = "dot", duration = 6 } }, stats)
+                assert.are.equal(6.0, result.totals.dpm)
+                assert.are.equal(300.0, result.totals.dpsc)
+            end)
+
+            it("channel-only with castTime=0: totals.dpm computed, totals.dpsc is nil", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 50 }
+                -- avg=400, totalAvg=400 → dpm=8.0; castTime=0 → dpsc=nil
+                local result = Calculator.computeMetrics(
+                    { { min = 400, max = 400, type = "channel", duration = 4 } }, stats)
+                assert.are.equal(8.0, result.totals.dpm)
+                assert.is_nil(result.totals.dpsc)
+            end)
+
+            it("heal-only: totals.dpm and totals.dpsc computed from totalAvg", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 1.5, gcd = 1.5, resourceCost = 200 }
+                -- avg=1000, totalAvg=1000 → dpm=5.0, dpsc=1000/1.5
+                local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
+                assert.are.equal(5.0, result.totals.dpm)
+                assert.are.equal(1000 / 1.5, result.totals.dpsc)
+            end)
+
+            it("instant heal with castTime=0: totals.dpsc is nil, totals.dpm computed", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 100 }
+                -- avg=500, totalAvg=500 → dpsc=nil; resourceCost=100 → dpm=5.0
+                local result = Calculator.computeMetrics({ { min = 500, max = 500, type = "heal" } }, stats)
+                assert.is_nil(result.totals.dpsc)
+                assert.are.equal(5.0, result.totals.dpm)
+            end)
+
+            it("free spell with resourceCost=0: totals.dpm is nil, totals.dpsc computed", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 0 }
+                -- avg=200, totalAvg=200 → dpm=nil; castTime=2.0 → dpsc=100.0
+                local result = Calculator.computeMetrics({ { min = 200, max = 200, type = "direct" } }, stats)
+                assert.is_nil(result.totals.dpm)
+                assert.are.equal(100.0, result.totals.dpsc)
+            end)
+
+            it("castTime=0 and resourceCost=0: both totals.dpsc and totals.dpm are nil", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
+                assert.is_nil(result.totals.dpsc)
+                assert.is_nil(result.totals.dpm)
+            end)
+
+            it("nil resourceCost: totals.dpm is nil (no crash)", function()
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5 }
+                -- resourceCost field is absent (nil); total avg=300 → dpsc=150.0; dpm=nil (no crash)
+                local result = Calculator.computeMetrics({ { min = 300, max = 300, type = "direct" } }, stats)
+                assert.is_nil(result.totals.dpm)
+                assert.is_nil(result.components[1].dpm)
+                assert.are.equal(150.0, result.totals.dpsc)
+            end)
+
+            it("mixed direct+dot: totals.dpm and totals.dpsc use the combined totalAvg", function()
+                -- direct avg=125 (crit), dot avg=750 (crit), totalAvg=875
+                -- dpm = 875/100 = 8.75, dpsc = 875/2.0 = 437.5
+                local mixedComponents = {
+                    { min = 100, max = 100, type = "direct" },
+                    { min = 600, max = 600, type = "dot", duration = 6 },
+                }
+                local result = Calculator.computeMetrics(mixedComponents, stdStats)
+                assert.are.equal(8.75, result.totals.dpm)
+                assert.are.equal(437.5, result.totals.dpsc)
+            end)
+
+            it("per-component dpm and dpsc are unaffected by totals aggregation", function()
+                -- Ensure adding totals.dpm/dpsc does not break existing per-component values
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
+                assert.are.equal(1.25, result.components[1].dpm)
+                assert.are.equal(62.5, result.components[1].dpsc)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
         -- Edge cases
         -- -----------------------------------------------------------------
         describe("edge cases", function()

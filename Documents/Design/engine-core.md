@@ -59,7 +59,7 @@ v1 ships English-only patterns. Adding a locale is a single table entry — no c
 
 ```lua
 -- stats shape:
-{ critChance = number, critMult = number, castTime = number, gcd = number, resourceCost = number }
+{ critChance = number, critMult = number, castTime = number, gcd = number, resourceCost = number? }
 ```
 
 `critMult` is the **full multiplier** — `2.0` means 200% (a 100% crit bonus). This matches how WoW reports it.
@@ -76,11 +76,11 @@ avg = (min + max) / 2 × (1 + critChance × (critMult − 1))
 
 `timeOnTarget = max(castTime, gcd)` — the window the player is "occupied" casting or waiting on the GCD.
 
-| Metric | Formula              | Nil guard                     |
-| ------ | -------------------- | ----------------------------- |
-| `dps`  | `avg / timeOnTarget` | nil when `timeOnTarget == 0`  |
-| `dpsc` | `avg / castTime`     | nil when `castTime == 0`      |
-| `dpm`  | `avg / resourceCost` | nil when `resourceCost == 0`  |
+| Metric | Formula              | Nil guard                           |
+| ------ | -------------------- | ----------------------------------- |
+| `dps`  | `avg / timeOnTarget` | nil when `timeOnTarget == 0`        |
+| `dpsc` | `avg / castTime`     | nil when `castTime == 0`            |
+| `dpm`  | `avg / resourceCost` | nil when `resourceCost` is nil or 0 |
 
 All nil guards are defensive: returning `nil` instead of `0` prevents the UI from displaying misleading zeroes.
 
@@ -88,7 +88,7 @@ For DoT and channel components `dotDps = avg / duration` (nil when `duration == 
 
 ### Heal Components
 
-Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue #18 for the planned design.
+Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue #18 for the planned design. Heal `avg` is included in `totalAvg`, so `totals.dpsc` and `totals.dpm` reflect heal contributions when those totals are non-nil.
 
 ### Output Shape
 
@@ -97,11 +97,15 @@ Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue 
     components = {
         { avg = number, type = string, dps = number?, dpsc = number?, dpm = number?, dotDps = number? }
     },
-    totals = { avg = number, dps = number? }
+    totals = { avg = number, dps = number?, dpsc = number?, dpm = number? }
 }
 ```
 
 `totals.dps` is nil when no component contributed a non-nil dps value.
+`totals.dpsc` is nil when `stats.castTime` is 0.
+`totals.dpm` is nil when `stats.resourceCost` is nil or 0.
+
+Per-component `dpsc` and `dpm` are populated for `direct` components only; they are `nil` for `dot`, `channel`, and `heal` components. `totals.dpsc` and `totals.dpm` aggregate all component types via `totalAvg`.
 
 ## Dual-Load Module Pattern
 
