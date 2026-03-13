@@ -14,7 +14,8 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 -- Computes per-component and aggregate metrics from parsed spell components.
 --
 -- parsedComponents: array of {min, max, type, duration?}  (nil/empty → returns nil)
--- stats:            {critChance, critMult, castTime, gcd, resourceCost?}  -- resourceCost nil → dpm omitted (unknown cost)
+-- stats:            {critChance, critMult, castTime, gcd, resourceCost?}
+--                   resourceCost nil → dpm omitted (unknown cost)
 --
 -- Returns { components = {...}, totals = { avg, dps, dpsc, dpm } }
 function Calculator.computeMetrics(parsedComponents, stats)
