@@ -81,6 +81,7 @@ BlazDamage/
 - **Constants**: UPPER_SNAKE_CASE (`MAX_OVERLAY_UPDATE_RATE`, `DEFAULT_METRIC`)
 - **Locals**: Always use `local` — never pollute the global namespace
 - **Addon namespace**: Access via `local addonName, BD = ...` in each file listed in the TOC
+- **Formatter**: `editor.formatOnSave` is disabled for Lua files (no auto-formatter configured). Style is governed by these conventions and `.editorconfig`. Do not add column-aligned whitespace that a formatter would override — if the formatter is ever enabled for Lua, configure it in `.vscode/settings.json`, stage your files (`git add`), and verify the formatter left the working tree clean (`git diff --exit-code` exits 0) before committing.
 
 ### Banned Suffixes
 
@@ -132,6 +133,8 @@ pwsh .github/scripts/validate-architecture.ps1
 ```bash
 luacheck . && pwsh .github/scripts/validate-architecture.ps1 && busted Tests/
 ```
+
+After writing all files and staging (`git add`), run `git diff --exit-code` to confirm no formatter has dirtied the working tree before committing.
 
 ## Code Review Configuration
 
