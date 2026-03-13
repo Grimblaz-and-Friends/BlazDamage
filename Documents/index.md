@@ -24,3 +24,4 @@
 - [Engine Core](Design/engine-core.md) — DescriptionParser, Calculator, StatFormulas design
 - [UI Foundation](Design/ui-foundation.md) — StatCollector, EventHandler, event model
 - [Actionbar Overlays](Design/actionbar-overlays.md) — Overlay renderer, discovery modes, data flow pipeline
+- [Developer Tooling](Design/developer-tooling.md) — Editor formatter settings, linting, and validation workflow
