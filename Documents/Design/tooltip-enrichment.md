@@ -1,4 +1,4 @@
-﻿# Tooltip Enrichment Design
+# Tooltip Enrichment Design
 
 `UI/TooltipEnricher.lua` appends calculated damage metrics to spell tooltips using WoW's modern `TooltipDataProcessor` API.
 
