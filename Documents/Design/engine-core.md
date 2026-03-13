@@ -107,6 +107,21 @@ Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue 
 
 Per-component `dpsc` and `dpm` are populated for `direct` components only; they are `nil` for `dot`, `channel`, and `heal` components. `totals.dpsc` and `totals.dpm` aggregate all component types via `totalAvg`.
 
+### resourceLabel
+
+`Calculator.resourceLabel(resourceType)` maps a WoW `Enum.PowerType` integer to a resource-efficiency metric label. Used by `UI/TooltipEnricher.lua` to label the `dpm` metric line.
+
+| `resourceType` | WoW Power Type | Label  |
+| -------------- | -------------- | ------ |
+| `0`            | Mana           | `DPM`  |
+| `1`            | Rage           | `DPR`  |
+| `2`            | Focus          | `DPF`  |
+| `3`            | Energy         | `DPE`  |
+| `6`            | Runic Power    | `DPRP` |
+| any other      | (unmapped)     | `DPR`  |
+
+Returns `nil` when `resourceType` is `nil` (costless spells). Returns `"DPR"` for all unmapped non-nil power types (future-safe default).
+
 ## Dual-Load Module Pattern
 
 Both Engine modules must work in two runtimes:

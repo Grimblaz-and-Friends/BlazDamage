@@ -38,6 +38,7 @@ function StatCollector.getSpellStats(spellID)
     local stats = {
         castTime     = (spellInfo and spellInfo.castTime or 0) / 1000,
         resourceCost = (costs and costs[1] and costs[1].cost) or 0,
+        resourceType = costs and costs[1] and costs[1].type,
         description  = description,
     }
     spellCache[spellID] = stats

@@ -91,5 +91,21 @@ function Calculator.resolveMetric(result, metricName)
     return result.totals[metricName]
 end
 
+local RESOURCE_LABELS = {
+    [0] = "DPM",  -- Mana
+    [1] = "DPR",  -- Rage
+    [2] = "DPF",  -- Focus
+    [3] = "DPE",  -- Energy
+    [6] = "DPRP", -- Runic Power
+}
+
+-- Returns a label for the resource efficiency metric based on WoW power type.
+-- Returns nil when resourceType is nil.
+-- Returns "DPR" as fallback for unmapped non-nil types.
+function Calculator.resourceLabel(resourceType)
+    if resourceType == nil then return nil end
+    return RESOURCE_LABELS[resourceType] or "DPR"
+end
+
 BD.Calculator = Calculator
 return Calculator

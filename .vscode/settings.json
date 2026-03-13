@@ -22,7 +22,8 @@
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   },
   "Lua.diagnostics.globals": [
-    "SlashCmdList"
+    "SlashCmdList",
+    "TooltipDataProcessor"
   ],
   "Lua.runtime.version": "Lua 5.1",
   "Lua.runtime.builtin": {
