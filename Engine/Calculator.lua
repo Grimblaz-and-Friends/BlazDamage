@@ -14,6 +14,8 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 -- Computes per-component and aggregate metrics from parsed spell components.
 --
 -- parsedComponents: array of {min, max, type, duration?}  (nil/empty → returns nil)
+--                   Components where min or max is not a number are silently skipped.
+--                   If all components are skipped the function returns nil.
 -- stats:            {critChance, critMult, castTime, gcd, resourceCost?}
 --                   resourceCost nil → dpm omitted (unknown cost)
 --
@@ -30,31 +32,37 @@ function Calculator.computeMetrics(parsedComponents, stats)
     local totalDps
 
     for _, component in ipairs(parsedComponents) do
-        local baseValue = (component.min + component.max) / 2
-        local avg = baseValue * (1 + stats.critChance * (stats.critMult - 1))
+        if type(component.min) == "number" and type(component.max) == "number" then
+            local baseValue = (component.min + component.max) / 2
+            local avg = baseValue * (1 + stats.critChance * (stats.critMult - 1))
 
-        local comp = { avg = avg, type = component.type }
+            local comp = { avg = avg, type = component.type }
 
-        if component.type == "direct" then
-            local dps = (timeOnTarget > 0) and (avg / timeOnTarget) or nil
-            comp.dps  = dps
-            comp.dpsc = (stats.castTime > 0) and (avg / stats.castTime) or nil
-            comp.dpm  = (stats.resourceCost ~= nil and stats.resourceCost > 0) and (avg / stats.resourceCost) or nil
-            if dps then
-                totalDps = (totalDps or 0) + dps
+            if component.type == "direct" then
+                local dps = (timeOnTarget > 0) and (avg / timeOnTarget) or nil
+                comp.dps  = dps
+                comp.dpsc = (stats.castTime > 0) and (avg / stats.castTime) or nil
+                comp.dpm  = (stats.resourceCost ~= nil and stats.resourceCost > 0) and (avg / stats.resourceCost) or nil
+                if dps then
+                    totalDps = (totalDps or 0) + dps
+                end
+            elseif component.type == "dot" or component.type == "channel" then
+                -- dot or channel: time-on-target = duration
+                local dotDps = ((component.duration or 0) > 0)
+                    and (avg / component.duration) or nil
+                comp.dotDps = dotDps
+                if dotDps then
+                    totalDps = (totalDps or 0) + dotDps
+                end
             end
-        elseif component.type == "dot" or component.type == "channel" then
-            -- dot or channel: time-on-target = duration
-            local dotDps = ((component.duration or 0) > 0)
-                and (avg / component.duration) or nil
-            comp.dotDps = dotDps
-            if dotDps then
-                totalDps = (totalDps or 0) + dotDps
-            end
+
+            totalAvg = totalAvg + avg
+            outputComponents[#outputComponents + 1] = comp
         end
+    end
 
-        totalAvg = totalAvg + avg
-        outputComponents[#outputComponents + 1] = comp
+    if #outputComponents == 0 then
+        return nil
     end
 
     local totalDpsc = (stats.castTime > 0) and (totalAvg / stats.castTime) or nil

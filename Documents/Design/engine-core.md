@@ -50,6 +50,7 @@ v1 ships English-only patterns. Adding a locale is a single table entry — no c
 ### Return Contract
 
 - Returns `nil` for nil/empty input, after markup stripping leaves only whitespace, or if no patterns match.
+- Components where `parseNumber()` returns `nil` (e.g. a commas-only capture like `",,,"` from `[%d,]+`) are silently dropped. If all components are dropped, `parse()` returns `nil`.
 - Otherwise returns an array of component tables (one per spell segment).
 - Heal components carry `type = "heal"` and only `avg` is summed (no HPS metric).
 
@@ -63,6 +64,8 @@ v1 ships English-only patterns. Adding a locale is a single table entry — no c
 ```
 
 `critMult` is the **full multiplier** — `2.0` means 200% (a 100% crit bonus). This matches how WoW reports it.
+
+Components where `min` or `max` is not a number are silently skipped. If all components are skipped, `computeMetrics()` returns `nil`.
 
 ### Core Formula
 
