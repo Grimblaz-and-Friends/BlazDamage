@@ -459,3 +459,40 @@ describe("resolveMetric", function()
         assert.is_nil(Calculator.resolveMetric(result, nil))
     end)
 end)
+
+-- =============================================================================
+-- resourceLabel
+-- =============================================================================
+describe("resourceLabel", function()
+    setup(function()
+        Calculator = require("Engine.Calculator")
+    end)
+
+    it("returns nil when resourceType is nil", function()
+        assert.is_nil(Calculator.resourceLabel(nil))
+    end)
+
+    -- Table-driven: each explicitly mapped resource type
+    local mappings = {
+        { resourceType = 0, label = "DPM",  name = "Mana" },
+        { resourceType = 1, label = "DPR",  name = "Rage" },
+        { resourceType = 2, label = "DPF",  name = "Focus" },
+        { resourceType = 3, label = "DPE",  name = "Energy" },
+        { resourceType = 6, label = "DPRP", name = "Runic Power" },
+    }
+
+    for _, m in ipairs(mappings) do
+        local rt, label, name = m.resourceType, m.label, m.name
+        it("returns " .. label .. " for " .. name .. " (type " .. rt .. ")", function()
+            assert.are.equal(label, Calculator.resourceLabel(rt))
+        end)
+    end
+
+    it("returns DPR fallback for unmapped type (99)", function()
+        assert.are.equal("DPR", Calculator.resourceLabel(99))
+    end)
+
+    it("returns DPR fallback for Maelstrom (type 11, unmapped)", function()
+        assert.are.equal("DPR", Calculator.resourceLabel(11))
+    end)
+end)

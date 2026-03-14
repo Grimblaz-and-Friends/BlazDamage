@@ -16,4 +16,5 @@ UI/StatCollector.lua
 UI/EventHandler.lua
 UI/OverlayRenderer.lua
 UI/ActionbarDiscovery.lua
+UI/TooltipEnricher.lua
 Core.lua

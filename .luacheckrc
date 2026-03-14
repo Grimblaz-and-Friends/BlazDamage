@@ -20,6 +20,8 @@ stds.wow = {
         "C_TooltipInfo",
         "C_ClassTalents",
         "C_Traits",
+        "TooltipDataProcessor",
+        "Enum",
         -- SavedVariables
         "BlazDamageDB",
         -- Stat functions
