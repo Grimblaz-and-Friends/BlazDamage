@@ -28,11 +28,20 @@ The tooltip enrichment layer is now fully implemented:
 
 See [Issue #8](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/8) and the [Tooltip Enrichment design doc](../../Documents/Design/tooltip-enrichment.md) for full details.
 
+## Completed: Issue #9 — Slash Command System
+
+- `Core.lua` slash handler extended with `metric`, `overlay`, `tooltip`, `help`, and `discovery` subcommands
+- `Config/Defaults.lua` — `BD.VALID_METRICS` constant added as single source of truth for valid metric names
+- All settings persist via SavedVariables (`BlazDamageDB`)
+- Live refresh: `OverlayRenderer.refreshAll()` called automatically after metric or overlay changes
+
+See [Issue #9](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/9) for full details.
+
 ## Immediate Next Actions
 
 All v1 features are now complete. Remaining work:
 
-1. **Manual in-game verification** — install the addon and verify tooltip lines appear on direct-damage, DoT, and heal spells; confirm unparseable spells produce no extra lines
+1. **Manual in-game verification** — install the addon and verify tooltip lines appear on direct-damage, DoT, and heal spells; confirm unparseable spells produce no extra lines; exercise slash commands in-game
 2. **Issue #18 — Heal HPS metric** — extend `Calculator.computeMetrics` to compute HPS for heal components; update `TooltipEnricher` to display it
 3. See the [Roadmap](ROADMAP.md) for post-v1 milestones
 

@@ -6,7 +6,7 @@ if type(BD) ~= "table" then BD = {} end
 
 local ActionbarDiscovery = {}
 
-local PREFIX = "|cFFFFFF00BlazDamage:|r"
+local PREFIX = BD.PREFIX
 local initialized = false
 
 local function scanDefaultButtons()
