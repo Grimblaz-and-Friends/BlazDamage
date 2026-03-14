@@ -8,3 +8,10 @@ BD.defaults = {
     critMult = 2.0,   -- crit damage multiplier; 2.0 = 200% (full crit). See issue #22 for improvement.
     discoveryMode = "auto",
 }
+
+-- Valid display metrics (must match Calculator.computeMetrics() totals keys)
+BD.VALID_METRICS = {"avg", "dps", "dpsc", "dpm"}
+
+BD.PREFIX = "|cFFFFFF00BlazDamage:|r"
+
+return BD
