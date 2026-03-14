@@ -294,6 +294,44 @@ describe("Calculator", function()
         end)
 
         -- -----------------------------------------------------------------
+        -- nil min/max guard
+        -- -----------------------------------------------------------------
+        describe("nil min/max guard", function()
+            it("skips a component where both min and max are nil", function()
+                local result = Calculator.computeMetrics({ { min = nil, max = nil, type = "direct" } }, stdStats)
+                assert.is_nil(result)
+            end)
+
+            it("skips a component where min is nil and max is valid", function()
+                local result = Calculator.computeMetrics({ { min = nil, max = 100, type = "direct" } }, stdStats)
+                assert.is_nil(result)
+            end)
+
+            it("skips a component where max is nil and min is valid", function()
+                local result = Calculator.computeMetrics({ { min = 100, max = nil, type = "direct" } }, stdStats)
+                assert.is_nil(result)
+            end)
+
+            it("still processes the valid component when mixed with a nil component", function()
+                local result = Calculator.computeMetrics({
+                    { min = 100, max = 100, type = "direct" },
+                    { min = nil, max = nil, type = "direct" },
+                }, stdStats)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result.components)
+                assert.are.equal(125, result.components[1].avg)
+            end)
+
+            it("returns nil when all components have nil min/max (all-invalid path returns nil)", function()
+                local result = Calculator.computeMetrics({
+                    { min = nil, max = nil, type = "direct" },
+                    { min = nil, max = nil, type = "dot", duration = 6 },
+                }, stdStats)
+                assert.is_nil(result)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
         -- Return structure invariants
         -- -----------------------------------------------------------------
         describe("return structure invariants", function()

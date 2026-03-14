@@ -94,7 +94,8 @@ function DescriptionParser.parse(description)
     local components = {}
     for _, segment in ipairs(segments) do
         local component = parseSegment(segment)
-        if component then
+        -- Skip components where parseNumber() returned nil (e.g. commas-only capture).
+        if component and type(component.min) == "number" and type(component.max) == "number" then
             table.insert(components, component)
         end
     end

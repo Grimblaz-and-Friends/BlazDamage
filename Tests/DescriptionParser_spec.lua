@@ -272,6 +272,48 @@ describe("DescriptionParser", function()
         end)
 
         -- -----------------------------------------------------------------
+        -- filters components with nil min/max
+        -- -----------------------------------------------------------------
+        describe("filters components with nil min/max", function()
+            it("returns nil for a description where the only number capture is commas-only", function()
+                -- ",,," matches [%d,]+ but tonumber("") -> nil; component is filtered; no valid components -> nil
+                local result = DescriptionParser.parse(",,, damage")
+                assert.is_nil(result)
+            end)
+
+            it("returns nil for a range description where the min capture is commas-only", function()
+                -- ",,, to 2,000 damage": range pattern matches; min parseNumber->nil; component filtered
+                local result = DescriptionParser.parse(",,, to 2,000 damage")
+                assert.is_nil(result)
+            end)
+
+            it("returns only the valid component when mixed with an invalid segment", function()
+                -- "1,000 damage, then ,,, damage over 8 sec"
+                -- Segment 1: valid direct {min=1000, max=1000}
+                -- Segment 2: dot pattern matches ",,,"; min=nil -> component filtered
+                -- Result: 1 valid component only
+                local result = DescriptionParser.parse("1,000 damage, then ,,, damage over 8 sec")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("direct", result[1].type)
+                assert.are.equal(1000, result[1].min)
+                assert.are.equal(1000, result[1].max)
+            end)
+
+            it("returns nil for a range description where the max capture is commas-only", function()
+                -- "1,000 to ,,, damage": range pattern matches; max parseNumber->nil; component filtered
+                local result = DescriptionParser.parse("1,000 to ,,, damage")
+                assert.is_nil(result)
+            end)
+
+            it("returns nil for a range-dot description where the min capture is commas-only", function()
+                -- ",,, to 2,000 damage over 8 sec": range_dot pattern matches; min parseNumber->nil; component filtered
+                local result = DescriptionParser.parse(",,, to 2,000 damage over 8 sec")
+                assert.is_nil(result)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
         -- Component structure invariants
         -- -----------------------------------------------------------------
         describe("component structure invariants", function()
