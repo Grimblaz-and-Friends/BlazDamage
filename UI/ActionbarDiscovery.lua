@@ -9,7 +9,7 @@ local ActionbarDiscovery = {}
 local PREFIX = BD.PREFIX
 local initialized = false
 
--- Bars 11 and 12 are the ElvUI pet bar and stance bar; no offensive spell actions there.
+-- Bars 11 and 12 are the ElvUI pet bar and stance bar; player stats don't apply to pet or stance abilities.
 local ELVUI_BAR_IDS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15}
 
 local function scanDefaultButtons()
