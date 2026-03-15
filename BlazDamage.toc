@@ -5,6 +5,7 @@
 ## Author: Grimblaz-and-Friends
 
 ## SavedVariables: BlazDamageDB
+## OptionalDeps: ElvUI
 
 ## X-Note: Early development — skeleton only
 
