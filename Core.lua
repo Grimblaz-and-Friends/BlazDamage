@@ -36,6 +36,7 @@ SlashCmdList["BLAZDAMAGE"] = function(msg)
         print(PREFIX .. "  Overlays:  " .. (BD.config.showOverlays and "Enabled" or "Disabled"))
         print(PREFIX .. "  Tooltips:  " .. (BD.config.showTooltips and "Enabled" or "Disabled"))
         print(PREFIX .. "  Discovery: " .. BD.config.discoveryMode)
+        print(PREFIX .. "  Perf:      " .. (BD.config.showPerf and "Enabled" or "Disabled"))
         return
     end
 
@@ -75,6 +76,10 @@ SlashCmdList["BLAZDAMAGE"] = function(msg)
         BD.config.showTooltips = not BD.config.showTooltips
         print(PREFIX .. " Tooltips: " .. (BD.config.showTooltips and "Enabled" or "Disabled"))
 
+    elseif cmd == "perf" then
+        BD.config.showPerf = not BD.config.showPerf
+        print(PREFIX .. " Perf: " .. (BD.config.showPerf and "Enabled" or "Disabled"))
+
     elseif cmd == "discovery" then
         if arg == "" then
             print(PREFIX .. " Discovery mode: " .. BD.config.discoveryMode)
@@ -91,6 +96,7 @@ SlashCmdList["BLAZDAMAGE"] = function(msg)
         print(PREFIX .. "  /bd metric <name>   — set overlay metric (" .. validMetrics .. ")")
         print(PREFIX .. "  /bd overlay         — toggle overlays")
         print(PREFIX .. "  /bd tooltip         — toggle tooltips")
+        print(PREFIX .. "  /bd perf            — toggle performance logging")
         print(PREFIX .. "  /bd discovery [auto|update] — show/set discovery mode")
         print(PREFIX .. "  /bd help            — show this help")
 
