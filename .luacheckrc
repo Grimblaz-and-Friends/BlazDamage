@@ -49,6 +49,9 @@ stds.wow = {
         "GameTooltip",
         "InterfaceOptionsFrame",
         "hooksecurefunc",
+        -- Debug profiling APIs
+        "debugprofilestart",
+        "debugprofilestop",
         -- Addon loading
         "IsAddOnLoaded",
     },

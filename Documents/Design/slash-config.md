@@ -4,17 +4,18 @@
 
 ## Overview
 
-The slash handler parses a `cmd` / `arg` pair from the raw message string and dispatches to one of six command branches. All mutating commands guard against `BD.config` being nil (addon-load race). `/bd help` is explicitly exempt from this guard so it works at any time.
+The slash handler parses a `cmd` / `arg` pair from the raw message string and dispatches to one of several command branches. All mutating commands guard against `BD.config` being nil (addon-load race). `/bd help` is explicitly exempt from this guard so it works at any time.
 
 ## Commands
 
 | Command | Effect |
 | --- | --- |
-| `/bd` | Show version, metric, overlay status, tooltip status, discovery mode |
+| `/bd` | Show version, metric, overlay status, tooltip status, discovery mode, perf status |
 | `/bd metric` | Show current metric and the list of valid options |
 | `/bd metric <name>` | Set display metric; validates against `BD.VALID_METRICS`; calls `refreshAll()` |
 | `/bd overlay` | Toggle `BD.config.showOverlays`; calls `refreshAll()` |
 | `/bd tooltip` | Toggle `BD.config.showTooltips` |
+| `/bd perf` | Toggle `BD.config.showPerf`; enables/disables performance timing output |
 | `/bd discovery` | Show current discovery mode |
 | `/bd discovery auto\|update` | Set discovery mode (reload required to apply) |
 | `/bd help` | Print full command list |
@@ -26,6 +27,7 @@ Unknown commands print: `Unknown command: <cmd>. Type /bd help for commands.`
 - **`metric` / `overlay`**: call `BD.OverlayRenderer.refreshAll()` immediately (nil-guarded) so the change is visible without a reload.
 - **`tooltip`**: no refresh; enrichment is re-evaluated on the next tooltip hover.
 - **`discovery`**: requires `/reload`; `ActionbarDiscovery.init()` runs once per session on `PLAYER_ENTERING_WORLD`.
+- **`perf`**: no refresh needed — instrumentation only; the toggle takes effect immediately on the next refresh cycle.
 
 ## Config Keys
 
@@ -37,6 +39,7 @@ All settings live on `BD.config` (= `BlazDamageDB` after `ADDON_LOADED`). New ke
 | `showOverlays` | `true` | boolean | Whether actionbar overlays are rendered |
 | `showTooltips` | `true` | boolean | Whether tooltip enrichment lines are appended |
 | `discoveryMode` | `"auto"` | string | Actionbar discovery strategy (`"auto"` or `"update"`) |
+| `showPerf` | `false` | boolean | Whether performance timing output is printed on each overlay refresh |
 | `critMult` | `2.0` | number | Crit damage multiplier (not slash-configurable; placeholder for Issue #22) |
 
 ## Namespace Constants
@@ -47,7 +50,7 @@ Defined in `Config/Defaults.lua`, available on the `BD` namespace as soon as `De
 The ordered list of valid metric names. Must stay in sync with the keys returned in `Calculator.computeMetrics().totals`. A contract test in `Tests/ValidMetrics_spec.lua` guards against drift.
 
 **`BD.PREFIX`** `= "|cFFFFFF00BlazDamage:|r"`
-Shared gold-colored chat prefix. Used by `Core.lua` and `ActionbarDiscovery.lua` for all in-game print output. Captured into a module-local `local PREFIX = BD.PREFIX` in `Core.lua` at file-load time.
+Shared gold-colored chat prefix. Used by `Core.lua`, `ActionbarDiscovery.lua`, and `OverlayRenderer.lua` for all in-game print output. Captured into a module-local `local PREFIX = BD.PREFIX` in `Core.lua` at file-load time.
 
 ## Implementation Notes
 

@@ -84,8 +84,16 @@ function OverlayRenderer.refreshAll()
         end
         return
     end
+    local perfEnabled = BD.config and BD.config.showPerf
+    if perfEnabled then debugprofilestart() end
     for button, entry in pairs(trackedButtons) do
         updateButton(button, entry)
+    end
+    if perfEnabled then
+        local elapsed = debugprofilestop()
+        local count = 0
+        for _ in pairs(trackedButtons) do count = count + 1 end
+        print(BD.PREFIX .. string.format(" refreshAll: %.3fms (%d buttons)", elapsed, count))
     end
 end
 
@@ -95,7 +103,13 @@ function OverlayRenderer.refreshSlot(slot)
     if button then
         local entry = trackedButtons[button]
         if entry then
+            local perfEnabled = BD.config and BD.config.showPerf
+            if perfEnabled then debugprofilestart() end
             updateButton(button, entry)
+            if perfEnabled then
+                local elapsed = debugprofilestop()
+                print(BD.PREFIX .. string.format(" refreshSlot[%d]: %.3fms", slot, elapsed))
+            end
         end
     end
 end

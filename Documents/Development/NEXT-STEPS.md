@@ -37,13 +37,20 @@ See [Issue #8](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/8) and 
 
 See [Issue #9](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/9) for full details.
 
+## In Progress: Issue #10 — Validation & Polish
+
+The `/bd perf` command is now implemented and operational:
+
+- `Config/Defaults.lua` — `showPerf = false` default added
+- `Core.lua` — `/bd perf` toggle, status display line, and help text added
+- `UI/OverlayRenderer.lua` — `debugprofilestart()`/`debugprofilestop()` instrumentation in `refreshAll()` and `refreshSlot()`
+
 ## Immediate Next Actions
 
-All v1 features are now complete. Remaining work:
-
-1. **Manual in-game verification** — install the addon and verify tooltip lines appear on direct-damage, DoT, and heal spells; confirm unparseable spells produce no extra lines; exercise slash commands in-game
-2. **Issue #18 — Heal HPS metric** — extend `Calculator.computeMetrics` to compute HPS for heal components; update `TooltipEnricher` to display it
-3. See the [Roadmap](ROADMAP.md) for post-v1 milestones
+1. **Manual in-game verification** — validate against 4 specs: Warrior (Rage/DPR), Death Knight (Runic Power/DPRP), Windwalker Monk (Energy/DPE), Enhancement Shaman (Mana/DPM). Use `/bd perf` to confirm < 1ms per refresh on standard Blizzard bars
+2. **ElvUI compatibility check** — expected zero buttons discovered (known v1 limitation; document if confirmed)
+3. **Issue #18 — Heal HPS metric** — extend `Calculator.computeMetrics` to compute HPS for heal components; update `TooltipEnricher` to display it
+4. See the [Roadmap](ROADMAP.md) for post-v1 milestones
 
 ## Blocked By
 

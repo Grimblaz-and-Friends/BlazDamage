@@ -7,6 +7,7 @@ BD.defaults = {
     showTooltips = true,
     critMult = 2.0,   -- crit damage multiplier; 2.0 = 200% (full crit). See issue #22 for improvement.
     discoveryMode = "auto",
+    showPerf = false,
 }
 
 -- Valid display metrics (must match Calculator.computeMetrics() totals keys)
