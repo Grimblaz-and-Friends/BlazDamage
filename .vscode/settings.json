@@ -22,6 +22,7 @@
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   },
   "Lua.diagnostics.globals": [
+    "ElvUI",
     "SlashCmdList",
     "TooltipDataProcessor"
   ],

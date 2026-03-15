@@ -34,10 +34,22 @@ Refreshes the single button mapped to a specific actionbar slot. Used for immedi
 ## ActionbarDiscovery API
 
 **`BD.ActionbarDiscovery.init()`**
-Idempotent. Runs once per session on `PLAYER_ENTERING_WORLD`. Reads `BD.config.discoveryMode` and dispatches to `initAuto()` or `initUpdate()`. Both modes call `scanDefaultButtons()` at init time.
+Idempotent. Runs once per session on `PLAYER_ENTERING_WORLD`. Reads `BD.config.discoveryMode` and dispatches to `initAuto()` or `initUpdate()`. Both modes call `scanDefaultButtons()` (and `scanElvUIButtons()` when ElvUI is present) at init time.
 
 **Discovery Modes**
 See [2026-03-10-switchable-actionbar-discovery.md](../Decisions/2026-03-10-switchable-actionbar-discovery.md).
+
+**ElvUI Auto-Detection**
+When ElvUI is loaded (`_G.ElvUI` is truthy), `scanElvUIButtons()` runs automatically after the default
+Blizzard bar scan in both discovery modes. It checks `_G["ElvUI_Bar{N}Button{M}"]` for bars {1–10,
+13–15} and buttons 1–12. No configuration is needed.
+
+If ElvUI is detected but no buttons are found (e.g., the ElvUI actionbar module is disabled), a warning
+is printed to chat. Blizzard bar overlays continue to work regardless.
+
+Known limitations:
+
+- Bars added or reconfigured mid-session require `/reload` to pick up new buttons.
 
 ## EventHandler Integration
 

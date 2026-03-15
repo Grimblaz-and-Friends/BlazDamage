@@ -53,6 +53,7 @@ stds.wow = {
         "debugprofilestart",
         "debugprofilestop",
         -- Addon loading
+        "ElvUI",
         "IsAddOnLoaded",
     },
 }
