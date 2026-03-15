@@ -4,7 +4,7 @@
 
 ## Overview
 
-The slash handler parses a `cmd` / `arg` pair from the raw message string and dispatches to one of six command branches. All mutating commands guard against `BD.config` being nil (addon-load race). `/bd help` is explicitly exempt from this guard so it works at any time.
+The slash handler parses a `cmd` / `arg` pair from the raw message string and dispatches to one of several command branches. All mutating commands guard against `BD.config` being nil (addon-load race). `/bd help` is explicitly exempt from this guard so it works at any time.
 
 ## Commands
 
