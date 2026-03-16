@@ -33,19 +33,23 @@ local function enrichCallback(tooltip, tooltipData)
     if not result then return end
 
     local totals = result.totals
+    local healOnly = BD.Calculator.isHealOnly(result.components)
 
     tooltip:AddLine("|cFFFFFF00BlazDamage:|r")
     tooltip:AddLine("  Avg: " .. BD.Calculator.formatNumber(totals.avg))
     if totals.dps then
-        tooltip:AddLine("  DPS: " .. BD.Calculator.formatNumber(totals.dps))
+        local dpsLabel = healOnly and "HPS" or "DPS"
+        tooltip:AddLine("  " .. dpsLabel .. ": " .. BD.Calculator.formatNumber(totals.dps))
     end
     if totals.dpsc and totals.dps then
-        tooltip:AddLine("  DPSC: " .. BD.Calculator.formatNumber(totals.dpsc))
+        local dpscLabel = healOnly and "HPSC" or "DPSC"
+        tooltip:AddLine("  " .. dpscLabel .. ": " .. BD.Calculator.formatNumber(totals.dpsc))
     end
     tooltip:AddLine("  Crit: " .. string.format("%.1f%%", playerStats.critChance * 100))
     local label = BD.Calculator.resourceLabel(spellStats.resourceType)
     if label and totals.dpm then
-        tooltip:AddLine("  " .. label .. ": " .. BD.Calculator.formatNumber(totals.dpm))
+        local displayLabel = healOnly and (string.gsub(label, "^D", "H")) or label
+        tooltip:AddLine("  " .. displayLabel .. ": " .. BD.Calculator.formatNumber(totals.dpm))
     end
 
     tooltip:Show()

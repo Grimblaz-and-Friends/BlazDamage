@@ -36,4 +36,29 @@ describe("ValidMetrics contract", function()
             )
         end
     end)
+
+    it("all VALID_METRICS keys resolve to non-nil totals for a heal spell", function()
+        -- Arrange: heal component with stats that produce non-nil values for
+        -- all four metrics (avg, dps, dpsc, dpm).
+        local components = { { min = 100, max = 100, type = "heal" } }
+        local stats = {
+            critChance   = 0,
+            critMult     = 2.0,
+            castTime     = 1.5,
+            gcd          = 1.5,
+            resourceCost = 100,
+        }
+
+        -- Act
+        local result = Calculator.computeMetrics(components, stats)
+
+        -- Assert: result is valid and every listed metric resolves to non-nil
+        assert.is_not_nil(result)
+        for _, key in ipairs(Defaults.VALID_METRICS) do
+            assert.is_not_nil(
+                Calculator.resolveMetric(result, key),
+                "resolveMetric for '" .. key .. "' must not be nil for a heal spell"
+            )
+        end
+    end)
 end)

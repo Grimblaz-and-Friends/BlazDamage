@@ -20,6 +20,8 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 --                   resourceCost nil → dpm omitted (unknown cost)
 --
 -- Returns { components = {...}, totals = { avg, dps, dpsc, dpm } }
+--   components entries: { avg, type, dps, dpsc, dpm }  for direct/heal
+--                       { avg, type, dotDps }           for dot/channel
 function Calculator.computeMetrics(parsedComponents, stats)
     if not parsedComponents or #parsedComponents == 0 then
         return nil
@@ -38,7 +40,7 @@ function Calculator.computeMetrics(parsedComponents, stats)
 
             local comp = { avg = avg, type = component.type }
 
-            if component.type == "direct" then
+            if component.type == "direct" or component.type == "heal" then
                 local dps = (timeOnTarget > 0) and (avg / timeOnTarget) or nil
                 comp.dps  = dps
                 comp.dpsc = (stats.castTime > 0) and (avg / stats.castTime) or nil
@@ -113,6 +115,16 @@ local RESOURCE_LABELS = {
 function Calculator.resourceLabel(resourceType)
     if resourceType == nil then return nil end
     return RESOURCE_LABELS[resourceType] or "DPR"
+end
+
+-- Returns true when all components have type "heal", false otherwise.
+-- Returns false for nil or empty input.
+function Calculator.isHealOnly(components)
+    if not components or #components == 0 then return false end
+    for _, comp in ipairs(components) do
+        if comp.type ~= "heal" then return false end
+    end
+    return true
 end
 
 BD.Calculator = Calculator

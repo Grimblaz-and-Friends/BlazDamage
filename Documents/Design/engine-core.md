@@ -52,7 +52,7 @@ v1 ships English-only patterns. Adding a locale is a single table entry — no c
 - Returns `nil` for nil/empty input, after markup stripping leaves only whitespace, or if no patterns match.
 - Components where `parseNumber()` returns `nil` (e.g. a commas-only capture like `",,,"` from `[%d,]+`) are silently dropped. If all components are dropped, `parse()` returns `nil`.
 - Otherwise returns an array of component tables (one per spell segment).
-- Heal components carry `type = "heal"` and only `avg` is summed (no HPS metric).
+- Heal components carry `type = "heal"`.
 
 ## Calculator
 
@@ -91,7 +91,9 @@ For DoT and channel components `dotDps = avg / duration` (nil when `duration == 
 
 ### Heal Components
 
-Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue #18 for the planned design. Heal `avg` is included in `totalAvg`, so `totals.dpsc` and `totals.dpm` reflect heal contributions when those totals are non-nil.
+Heal components compute the same throughput metrics as `direct`: per-component `dps`, `dpsc`, and `dpm` using identical formulas. Heal components also contribute to `totals.dps`.
+
+`Calculator.isHealOnly(components)` takes the `result.components` array and returns `true` when every entry has `type == "heal"`. Returns `false` for nil, empty input, or any mixed component set. Used by `UI/TooltipEnricher.lua` to select heal-specific label strings.
 
 ### Output Shape
 
@@ -108,7 +110,7 @@ Heal components produce `avg` only. HPS is not computed in v1; see GitHub issue 
 `totals.dpsc` is nil when `stats.castTime` is 0.
 `totals.dpm` is nil when `stats.resourceCost` is nil or 0.
 
-Per-component `dpsc` and `dpm` are populated for `direct` components only; they are `nil` for `dot`, `channel`, and `heal` components. `totals.dpsc` and `totals.dpm` aggregate all component types via `totalAvg`.
+Per-component `dpsc` and `dpm` are populated for `direct` and `heal` components; they are `nil` for `dot` and `channel` components. All component types (direct, heal, dot, channel) contribute their `avg` to `totalAvg`; this accumulator drives `totals.dpsc` and `totals.dpm`.
 
 ### resourceLabel
 
@@ -157,7 +159,7 @@ Tests live in `Tests/Calculator_spec.lua` and `Tests/DescriptionParser_spec.lua`
 
 - [ ] `DescriptionParser.parse()` returns `nil` for unrecognised descriptions (no errors)
 - [ ] Parsed components include `type`, `min`, `max`, and optional `duration`
-- [ ] Heal components carry `type = "heal"`; `avg` is computed; no HPS metric
+- [x] Heal components carry `type = "heal"`; per-component `dps`, `dpsc`, `dpm` computed; contribute to `totals.dps`
 - [ ] `Calculator.computeMetrics()` returns `nil` when given nil or empty components
 - [ ] All time-normalised metrics (`dps`, `dpsc`, `dpm`) are `nil` (not `0`) when their divisor is zero
 - [ ] Both modules load via `require()` in busted without errors

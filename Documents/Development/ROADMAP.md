@@ -22,8 +22,8 @@ Ship correct values for the most common cases before expanding coverage. A relia
 
 **Goal**: Expand to healing metrics and add a minimal in-game options panel.
 
-- [ ] Healing description parser (adapts v1 parser for healing format)
-- [ ] Healing metrics: avg heal, HPS, HPM
+- [x] Healing description parser (heal pattern in DescriptionParser — shipped in v1)
+- [x] Healing metrics: avg heal, HPS, HPSC, HPM/HPR/HPRP/HPE/HPF — per-component and aggregate (v1.1)
 - [ ] In-game options panel (Blizzard InterfaceOptions or a simple /bd config frame)
 - [ ] Configuration persistence via SavedVariables
 - [ ] User-selectable display metric per-slot (future)
