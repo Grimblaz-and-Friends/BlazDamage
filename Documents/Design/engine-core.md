@@ -57,9 +57,13 @@ any-char) is required.
 
 **Restore patterns produce `type = "heal"`:** Both `restore` and `range_restore` classify their component as `type = "heal"`. There is no separate `"restore"` type in the component schema.
 
-**Known limitation:** The `.-` gap in `restore` and `range_restore` is lazy but could theoretically capture a stray number before the intended value —
-for example, `"Returns 1 stack and restores 15000 health"` might match `1` instead of `15000`. No known WoW retail spell in English currently triggers
-this. The mandatory `health` suffix anchor provides additional specificity that reduces the risk.
+**Known limitation:** The `.-` gap in `restore` and `range_restore` is lazy but could capture the wrong number in mixed-resource descriptions.
+For example, `"Restores 500 Mana and 2000 health"` would match `500` (the Mana value) instead of returning nil — the `health` suffix anchor fires
+because "health" appears later in the sentence, but the `.-` gap absorbs the resource label and captures the first number. No WoW retail spell
+description is currently known to use this format through `C_Spell.GetSpellDescription`.
+
+The `.-` gap in `heal` and `range_heal` patterns has a similar risk: any description containing the word "heal" as a sub-word followed by "for N"
+could produce a spurious component (e.g., `"Increases healing done for 30 sec"` → `heal(30)`). A word-boundary fix is tracked in issue #39.
 
 ### Return Contract
 

@@ -188,7 +188,7 @@ describe("DescriptionParser", function()
         -- Healing with intermediate text
         -- -----------------------------------------------------------------
         describe("healing with intermediate text", function()
-            it("parses heal when text before 'for' contains only letters and spaces", function()
+            it("parses heal when intermediate text before 'for' contains digits (e.g. yard distance)", function()
                 local result = DescriptionParser.parse("healing all party or raid members within 40 yards for 1,029")
                 assert.is_not_nil(result)
                 assert.are.equal(1, #result)
@@ -307,6 +307,12 @@ describe("DescriptionParser", function()
                 local result = DescriptionParser.parse("restores 1,500 to 2,500 of a friendly target's health")
                 assert.are.equal(1500, result[1].min)
                 assert.are.equal(2500, result[1].max)
+            end)
+
+            it("does not attach a duration to a range restore component", function()
+                local result = DescriptionParser.parse("restores 1,500 to 2,500 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.is_nil(result[1].duration)
             end)
         end)
 
@@ -471,6 +477,7 @@ describe("DescriptionParser", function()
                 "Heals for 2,500",
                 "restores 15,432 health",
                 "Heals a friendly target for 1,000 to 2,000",
+                "restores 1,500 to 2,500 of a friendly target's health",
             }
 
             it("every parsed component has a numeric min field", function()
@@ -503,6 +510,7 @@ describe("DescriptionParser", function()
                     "Deals 1,000 damage, then 3,000 damage over 8 sec",
                     "restores 15,432 health",
                     "Heals a friendly target for 1,000 to 2,000",
+                    "restores 1,500 to 2,500 of a friendly target's health",
                 }
                 local valid = { direct = true, dot = true, channel = true, heal = true }
                 for _, desc in ipairs(all_descs) do
@@ -521,9 +529,12 @@ describe("DescriptionParser", function()
                 local cases = {
                     { desc = "Deals 1,234 Fire damage",          has_duration = false },
                     { desc = "1,000 to 2,000 damage",            has_duration = false },
-                    { desc = "Heals for 2,500",                  has_duration = false },
-                    { desc = "Deals 5,000 damage over 12 sec",   has_duration = true },
-                    { desc = "Channels 3,000 damage over 4 sec", has_duration = true },
+                    { desc = "Heals for 2,500",                                            has_duration = false },
+                    { desc = "Heals a friendly target for 1,000 to 2,000",                   has_duration = false },
+                    { desc = "restores 15,432 of a friendly target's health",                has_duration = false },
+                    { desc = "restores 1,500 to 2,500 of a friendly target's health",        has_duration = false },
+                    { desc = "Deals 5,000 damage over 12 sec",                              has_duration = true },
+                    { desc = "Channels 3,000 damage over 4 sec",                            has_duration = true },
                 }
                 for _, case in ipairs(cases) do
                     local result = DescriptionParser.parse(case.desc)
