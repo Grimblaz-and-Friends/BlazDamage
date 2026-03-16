@@ -49,7 +49,7 @@ The `/bd perf` command is now implemented and operational:
 
 1. **Manual in-game verification** — validate against 4 specs: Warrior (Rage/DPR), Death Knight (Runic Power/DPRP), Windwalker Monk (Energy/DPE), Enhancement Shaman (Mana/DPM). Use `/bd perf` to confirm < 1ms per refresh on standard Blizzard bars
 2. **ElvUI compatibility check** — expected zero buttons discovered (known v1 limitation; document if confirmed)
-3. **Issue #18 — Heal HPS metric** — extend `Calculator.computeMetrics` to compute HPS for heal components; update `TooltipEnricher` to display it
+3. **HPS/HPSC/HPM metrics** — ✅ Completed. Heal components now compute per-component `dps`/`dpsc`/`dpm`; tooltip shows `HPS`/`HPSC`/`HPM` labels for heal-only spells.
 4. See the [Roadmap](ROADMAP.md) for post-v1 milestones
 
 ## Blocked By

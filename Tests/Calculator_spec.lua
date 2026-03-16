@@ -274,6 +274,67 @@ describe("Calculator", function()
         end)
 
         -- -----------------------------------------------------------------
+        -- Heal per-component metrics (Issue #18)
+        -- -----------------------------------------------------------------
+        describe("heal per-component metrics", function()
+            it("heal component computes per-component dps = avg / timeOnTarget", function()
+                -- avg=1000 (critChance=0), timeOnTarget=max(2.0,1.5)=2.0 → dps=500.0
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
+                assert.are.equal(500.0, result.components[1].dps)
+            end)
+
+            it("heal component computes per-component dpsc = avg / castTime", function()
+                -- avg=1000 (critChance=0), castTime=2.0 → dpsc=500.0
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
+                assert.are.equal(500.0, result.components[1].dpsc)
+            end)
+
+            it("heal component computes per-component dpm = avg / resourceCost", function()
+                -- avg=1000 (critChance=0), resourceCost=100 → dpm=10.0
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
+                assert.are.equal(10.0, result.components[1].dpm)
+            end)
+
+            it("instant heal (castTime=0): comp.dpsc is nil, comp.dps uses gcd floor", function()
+                -- avg=900 (critChance=0), timeOnTarget=max(0,1.5)=1.5 → dps=600.0; castTime=0 → dpsc=nil
+                local stats = { critChance = 0, critMult = 2.0, castTime = 0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 900, max = 900, type = "heal" } }, stats)
+                assert.is_nil(result.components[1].dpsc)
+                assert.are.equal(600.0, result.components[1].dps)
+            end)
+
+            it("free heal (resourceCost=0): comp.dpm is nil", function()
+                -- avg=800 (critChance=0), resourceCost=0 → dpm=nil
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 0 }
+                local result = Calculator.computeMetrics({ { min = 800, max = 800, type = "heal" } }, stats)
+                assert.is_nil(result.components[1].dpm)
+            end)
+
+            it("heal contributes to totals.dps", function()
+                -- avg=2000 (critChance=0), timeOnTarget=max(2.0,1.5)=2.0 → totals.dps=1000.0
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 2000, max = 2000, type = "heal" } }, stats)
+                assert.are.equal(1000.0, result.totals.dps)
+            end)
+
+            it("mixed direct+heal: totals.dps aggregates both components", function()
+                -- direct: avg=500, dps=500/2.0=250.0; heal: avg=500, dps=500/2.0=250.0 → totals.dps=500.0
+                -- totalAvg=1000; dpsc=1000/2.0=500.0; dpm=1000/100=10.0
+                local stats = { critChance = 0, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({
+                    { min = 500, max = 500, type = "direct" },
+                    { min = 500, max = 500, type = "heal" },
+                }, stats)
+                assert.are.equal(500.0, result.totals.dps)
+                assert.are.equal(500.0, result.totals.dpsc)
+                assert.are.equal(10.0,  result.totals.dpm)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
         -- Edge cases
         -- -----------------------------------------------------------------
         describe("edge cases", function()
@@ -423,6 +484,49 @@ describe("Calculator", function()
             -- ASSERT
             assert.is_not_nil(result)
             assert.are.equal(2, #result.components)
+        end)
+    end)
+end)
+
+-- =============================================================================
+-- isHealOnly
+-- =============================================================================
+describe("Calculator", function()
+    setup(function()
+        Calculator = require("Engine.Calculator")
+    end)
+
+    describe("isHealOnly", function()
+        it("returns true when all components have type heal", function()
+            assert.is_true(Calculator.isHealOnly({ { type = "heal" }, { type = "heal" } }))
+        end)
+
+        it("returns false when all components have type direct", function()
+            assert.is_false(Calculator.isHealOnly({ { type = "direct" } }))
+        end)
+
+        it("returns false for mixed heal and direct components", function()
+            assert.is_false(Calculator.isHealOnly({ { type = "heal" }, { type = "direct" } }))
+        end)
+
+        it("returns false for a single dot component", function()
+            assert.is_false(Calculator.isHealOnly({ { type = "dot" } }))
+        end)
+
+        it("returns false for mixed heal and dot components", function()
+            assert.is_false(Calculator.isHealOnly({ { type = "heal" }, { type = "dot" } }))
+        end)
+
+        it("returns false when components is nil", function()
+            assert.is_false(Calculator.isHealOnly(nil))
+        end)
+
+        it("returns false when components is an empty table", function()
+            assert.is_false(Calculator.isHealOnly({}))
+        end)
+
+        it("returns true for a single heal component", function()
+            assert.is_true(Calculator.isHealOnly({ { type = "heal" } }))
         end)
     end)
 end)
