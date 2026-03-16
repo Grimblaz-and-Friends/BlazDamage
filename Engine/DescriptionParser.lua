@@ -54,19 +54,14 @@ local function parseSegment(text)
     dmg, dur = text:match(PATTERNS.dot)
     if dmg then return singleComponent(dmg, "dot", tonumber(dur)) end
 
-    -- Range direct: "N to M damage"
-    local lo, hi = text:match(PATTERNS.range)
-    if lo then return rangeComponent(lo, hi, "direct") end
-
-    -- Single direct: "N <optional school> damage"
-    dmg = text:match(PATTERNS.direct)
-    if dmg then return singleComponent(dmg, "direct") end
-
     -- Range heal: "Heals for N to M"  (must check before single heal)
-    lo, hi = text:match(PATTERNS.range_heal)
+    -- Must also come before range/direct: "healing for N when they take damage"
+    -- would otherwise match direct via ([%d,]+)[%a%s]*damage.
+    local lo, hi = text:match(PATTERNS.range_heal)
     if lo then return rangeComponent(lo, hi, "heal") end
 
-    -- Heal: "Heals for N"  (.- matches intermediate digits, e.g. "within 40 yards for N")
+    -- Heal: "Heals ... for N"  (.- matches intermediate text, e.g. "healing them for N")
+    -- Must come before direct for the same reason as range_heal above.
     dmg = text:match(PATTERNS.heal)
     if dmg then return singleComponent(dmg, "heal") end
 
@@ -77,6 +72,14 @@ local function parseSegment(text)
     -- Restore: "Restores N of...health"
     dmg = text:match(PATTERNS.restore)
     if dmg then return singleComponent(dmg, "heal") end
+
+    -- Range direct: "N to M damage"
+    lo, hi = text:match(PATTERNS.range)
+    if lo then return rangeComponent(lo, hi, "direct") end
+
+    -- Single direct: "N <optional school> damage"
+    dmg = text:match(PATTERNS.direct)
+    if dmg then return singleComponent(dmg, "direct") end
 
     return nil
 end
