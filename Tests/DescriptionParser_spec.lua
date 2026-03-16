@@ -565,5 +565,57 @@ describe("DescriptionParser", function()
                 end
             end)
         end)
+
+        -- -----------------------------------------------------------------
+        -- Heal-before-direct priority (e.g. Earth Shield)
+        -- -----------------------------------------------------------------
+        describe("heal-before-direct priority", function()
+            it("classifies 'healing them for N when they take damage' as heal, not direct", function()
+                local result = DescriptionParser.parse("healing them for 4,321 when they take damage")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(4321, result[1].min)
+                assert.are.equal(4321, result[1].max)
+            end)
+
+            it("classifies full Earth Shield description segment as heal", function()
+                local desc = "increasing your healing on them by 20% and healing them for 4,321 when they take damage"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(4321, result[1].min)
+            end)
+
+            it("still classifies a pure damage description as direct after the reorder", function()
+                local result = DescriptionParser.parse("Deals 1,234 Fire damage")
+                assert.is_not_nil(result)
+                assert.are.equal("direct", result[1].type)
+                assert.are.equal(1234, result[1].min)
+            end)
+
+            it("classifies Frost Shock style description as direct", function()
+                local desc = "Chills the target with frost, causing 15,234 Frost damage"
+                    .. " and reducing movement speed by 50% for 6 sec"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("direct", result[1].type)
+                assert.are.equal(15234, result[1].min)
+                assert.are.equal(15234, result[1].max)
+            end)
+
+            it("classifies Chain Lightning style description as direct", function()
+                local desc = "Hurls a lightning bolt at the enemy, dealing 12,345 Nature damage"
+                    .. " and then jumping to additional nearby enemies"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("direct", result[1].type)
+                assert.are.equal(12345, result[1].min)
+                assert.are.equal(12345, result[1].max)
+            end)
+        end)
     end) -- describe("parse")
 end)     -- describe("DescriptionParser")
