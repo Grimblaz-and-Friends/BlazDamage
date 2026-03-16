@@ -26,7 +26,7 @@ This array passes directly into `Calculator.computeMetrics(parsedComponents, sta
 
 - Strips WoW markup (`|cAARRGGBB...|r` color codes and `|T...|t` texture tags) before pattern matching.
 - Splits descriptions on `", then "` to handle mixed direct + DoT spells.
-- Applies regex patterns in priority order: channel → range-DoT → DoT → range direct → direct → heal.
+- Applies regex patterns in priority order: channel → range-DoT → DoT → range direct → direct → range-heal → heal → range-restore → restore.
 
 ### Pattern Table
 
@@ -41,11 +41,25 @@ local PATTERNS = {
     dot           = "([%d,]+)[%a%s]*damage over (%d+) sec",
     range         = "([%d,]+) to ([%d,]+)[%a%s]*damage",
     direct        = "([%d,]+)[%a%s]*damage",
-    heal          = "[Hh]eals? for ([%d,]+)",
+    range_heal    = "[Hh]eals?.- for ([%d,]+) to ([%d,]+)",
+    heal          = "[Hh]eals?.- for ([%d,]+)",
+    range_restore = "[Rr]estore[sd]?.- ([%d,]+) to ([%d,]+).- health",
+    restore       = "[Rr]estore[sd]?.- ([%d,]+).- health",
 }
 ```
 
 v1 ships English-only patterns. Adding a locale is a single table entry — no code path changes.
+
+**Gap pattern difference — `.-` vs `[%a%s]*`:** Damage patterns use `[%a%s]*` for the gap before `"damage"` because that gap only ever contains school text
+(letters and spaces, e.g., `"Fire damage"`). Heal and restore patterns use `.-` because the gap before `"for"` or before the number may contain digits —
+for example, `"heals an injured party or raid member within 40 yards for 1,029"`. The digit `40` would cause `[%a%s]*` to stop matching, so `.-` (lazy
+any-char) is required.
+
+**Restore patterns produce `type = "heal"`:** Both `restore` and `range_restore` classify their component as `type = "heal"`. There is no separate `"restore"` type in the component schema.
+
+**Known limitation:** The `.-` gap in `restore` and `range_restore` is lazy but could theoretically capture a stray number before the intended value —
+for example, `"Returns 1 stack and restores 15000 health"` might match `1` instead of `15000`. No known WoW retail spell in English currently triggers
+this. The mandatory `health` suffix anchor provides additional specificity that reduces the risk.
 
 ### Return Contract
 
