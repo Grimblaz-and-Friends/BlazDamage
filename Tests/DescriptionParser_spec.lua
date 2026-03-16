@@ -185,6 +185,162 @@ describe("DescriptionParser", function()
         end)
 
         -- -----------------------------------------------------------------
+        -- Healing with intermediate text
+        -- -----------------------------------------------------------------
+        describe("healing with intermediate text", function()
+            it("parses heal when intermediate text before 'for' contains digits (e.g. yard distance)", function()
+                local result = DescriptionParser.parse("healing all party or raid members within 40 yards for 1,029")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(1029, result[1].min)
+                assert.are.equal(1029, result[1].max)
+            end)
+
+            it("parses heal when intermediate text contains digits (e.g. yards)", function()
+                local desc = "heals an injured party or raid member within 40 yards for 1,029 every 2 sec"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(1029, result[1].min)
+                assert.are.equal(1029, result[1].max)
+            end)
+
+            it("does not attach a duration for a flat heal despite trailing 'every N sec' text", function()
+                local desc = "heals an injured party or raid member within 40 yards for 1,029 every 2 sec"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.is_nil(result[1].duration)
+            end)
+
+            it("parses heal in the first segment after ', then ' split", function()
+                local desc = "Heals a friendly target for 12,345,"
+                    .. " then jumps to the most injured party or raid member"
+                local result = DescriptionParser.parse(desc)
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(12345, result[1].min)
+                assert.are.equal(12345, result[1].max)
+            end)
+
+            it("captures the first heal value when multiple numbers follow 'for'", function()
+                local result = DescriptionParser.parse("heals the target for 5,000 and an additional 2,500 over 8 sec")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(5000, result[1].min)
+                assert.are.equal(5000, result[1].max)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
+        -- Range heal (min != max)
+        -- -----------------------------------------------------------------
+        describe("range heal", function()
+            it("returns one heal component for a min-to-max heal description", function()
+                local result = DescriptionParser.parse("Heals a friendly target for 1,000 to 2,000")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+            end)
+
+            it("preserves distinct min and max for a range heal", function()
+                local result = DescriptionParser.parse("Heals a friendly target for 1,000 to 2,000")
+                assert.are.equal(1000, result[1].min)
+                assert.are.equal(2000, result[1].max)
+            end)
+
+            it("does not attach a duration to a range heal component", function()
+                local result = DescriptionParser.parse("Heals a friendly target for 1,000 to 2,000")
+                assert.is_nil(result[1].duration)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
+        -- Restore pattern ("restores N of...health")
+        -- -----------------------------------------------------------------
+        describe("restore pattern", function()
+            it("parses 'restores N of...health' as a heal component", function()
+                local result = DescriptionParser.parse("restores 15,432 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(15432, result[1].min)
+                assert.are.equal(15432, result[1].max)
+            end)
+
+            it("parses capitalised Restores as a heal component", function()
+                local result = DescriptionParser.parse("Restores 18,750 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(18750, result[1].min)
+                assert.are.equal(18750, result[1].max)
+            end)
+
+            it("parses full Healing Surge text as a heal component", function()
+                local result = DescriptionParser.parse(
+                    [[A quick surge of healing energy that restores 15,432 of a friendly target's health]]
+                )
+                assert.is_not_nil(result)
+                assert.are.equal("heal", result[1].type)
+                assert.are.equal(15432, result[1].min)
+                assert.are.equal(15432, result[1].max)
+            end)
+
+            it("does not attach a duration to a restore component", function()
+                local result = DescriptionParser.parse("restores 15,432 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.is_nil(result[1].duration)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
+        -- Range restore ("restores N to M of...health")
+        -- -----------------------------------------------------------------
+        describe("range restore", function()
+            it("returns one heal component for a range restore description", function()
+                local result = DescriptionParser.parse("restores 1,500 to 2,500 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.are.equal(1, #result)
+                assert.are.equal("heal", result[1].type)
+            end)
+
+            it("preserves distinct min and max for a range restore", function()
+                local result = DescriptionParser.parse("restores 1,500 to 2,500 of a friendly target's health")
+                assert.are.equal(1500, result[1].min)
+                assert.are.equal(2500, result[1].max)
+            end)
+
+            it("does not attach a duration to a range restore component", function()
+                local result = DescriptionParser.parse("restores 1,500 to 2,500 of a friendly target's health")
+                assert.is_not_nil(result)
+                assert.is_nil(result[1].duration)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
+        -- Restore negative tests (non-health resources must not match)
+        -- -----------------------------------------------------------------
+        describe("restore negative tests", function()
+            it("returns nil for 'Restores 100 Mana' (no health anchor)", function()
+                local result = DescriptionParser.parse("Restores 100 Mana")
+                assert.is_nil(result)
+            end)
+
+            it("returns nil for 'Restores 5 charges' (no health anchor)", function()
+                local result = DescriptionParser.parse("Restores 5 charges")
+                assert.is_nil(result)
+            end)
+
+            it("returns nil for energy restore without health anchor", function()
+                local result = DescriptionParser.parse("Restores 3,000 energy over 10 sec")
+                assert.is_nil(result)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
         -- Mixed: direct hit followed by DoT
         -- -----------------------------------------------------------------
         describe("mixed direct + DoT", function()
@@ -323,6 +479,9 @@ describe("DescriptionParser", function()
                 "Deals 5,000 damage over 12 sec",
                 "Channels 3,000 damage over 4 sec",
                 "Heals for 2,500",
+                "restores 15,432 health",
+                "Heals a friendly target for 1,000 to 2,000",
+                "restores 1,500 to 2,500 of a friendly target's health",
             }
 
             it("every parsed component has a numeric min field", function()
@@ -353,6 +512,9 @@ describe("DescriptionParser", function()
                     "Channels 3,000 damage over 4 sec",
                     "Heals for 2,500",
                     "Deals 1,000 damage, then 3,000 damage over 8 sec",
+                    "restores 15,432 health",
+                    "Heals a friendly target for 1,000 to 2,000",
+                    "restores 1,500 to 2,500 of a friendly target's health",
                 }
                 local valid = { direct = true, dot = true, channel = true, heal = true }
                 for _, desc in ipairs(all_descs) do
@@ -371,9 +533,12 @@ describe("DescriptionParser", function()
                 local cases = {
                     { desc = "Deals 1,234 Fire damage",          has_duration = false },
                     { desc = "1,000 to 2,000 damage",            has_duration = false },
-                    { desc = "Heals for 2,500",                  has_duration = false },
-                    { desc = "Deals 5,000 damage over 12 sec",   has_duration = true },
-                    { desc = "Channels 3,000 damage over 4 sec", has_duration = true },
+                    { desc = "Heals for 2,500",                                            has_duration = false },
+                    { desc = "Heals a friendly target for 1,000 to 2,000",                   has_duration = false },
+                    { desc = "restores 15,432 of a friendly target's health",                has_duration = false },
+                    { desc = "restores 1,500 to 2,500 of a friendly target's health",        has_duration = false },
+                    { desc = "Deals 5,000 damage over 12 sec",                              has_duration = true },
+                    { desc = "Channels 3,000 damage over 4 sec",                            has_duration = true },
                 }
                 for _, case in ipairs(cases) do
                     local result = DescriptionParser.parse(case.desc)

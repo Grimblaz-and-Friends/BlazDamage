@@ -16,7 +16,10 @@ local PATTERNS = {
     dot           = "([%d,]+)[%a%s]*damage over (%d+) sec",
     range         = "([%d,]+) to ([%d,]+)[%a%s]*damage",
     direct        = "([%d,]+)[%a%s]*damage",
-    heal          = "[Hh]eals? for ([%d,]+)",
+    range_heal    = "[Hh]eals?.- for ([%d,]+) to ([%d,]+)",
+    heal          = "[Hh]eals?.- for ([%d,]+)",
+    range_restore = "[Rr]estore[sd]?.- ([%d,]+) to ([%d,]+).- health",
+    restore       = "[Rr]estore[sd]?.- ([%d,]+).- health",
 }
 
 local function stripMarkup(text)
@@ -34,6 +37,10 @@ local function singleComponent(rawDmg, compType, duration)
     return { min = n, max = n, type = compType, duration = duration }
 end
 
+local function rangeComponent(lo, hi, compType, duration)
+    return { min = parseNumber(lo), max = parseNumber(hi), type = compType, duration = duration }
+end
+
 local function parseSegment(text)
     -- Channel: "Channels N damage over D sec"
     local dmg, dur = text:match(PATTERNS.channel)
@@ -41,9 +48,7 @@ local function parseSegment(text)
 
     -- Range damage over time: "N to M <school> damage over D sec"
     local minDmg, maxDmg, dur2 = text:match(PATTERNS.range_dot)
-    if minDmg then
-        return { min = parseNumber(minDmg), max = parseNumber(maxDmg), type = "dot", duration = tonumber(dur2) }
-    end
+    if minDmg then return rangeComponent(minDmg, maxDmg, "dot", tonumber(dur2)) end
 
     -- Damage over time: "N <school> damage over D sec"
     dmg, dur = text:match(PATTERNS.dot)
@@ -51,16 +56,26 @@ local function parseSegment(text)
 
     -- Range direct: "N to M damage"
     local lo, hi = text:match(PATTERNS.range)
-    if lo then
-        return { min = parseNumber(lo), max = parseNumber(hi), type = "direct" }
-    end
+    if lo then return rangeComponent(lo, hi, "direct") end
 
     -- Single direct: "N <optional school> damage"
     dmg = text:match(PATTERNS.direct)
     if dmg then return singleComponent(dmg, "direct") end
 
-    -- Heal: "Heals for N"
+    -- Range heal: "Heals for N to M"  (must check before single heal)
+    lo, hi = text:match(PATTERNS.range_heal)
+    if lo then return rangeComponent(lo, hi, "heal") end
+
+    -- Heal: "Heals for N"  (.- matches intermediate digits, e.g. "within 40 yards for N")
     dmg = text:match(PATTERNS.heal)
+    if dmg then return singleComponent(dmg, "heal") end
+
+    -- Range restore: "Restores N to M of...health"  (must check before single restore)
+    lo, hi = text:match(PATTERNS.range_restore)
+    if lo then return rangeComponent(lo, hi, "heal") end
+
+    -- Restore: "Restores N of...health"
+    dmg = text:match(PATTERNS.restore)
     if dmg then return singleComponent(dmg, "heal") end
 
     return nil
