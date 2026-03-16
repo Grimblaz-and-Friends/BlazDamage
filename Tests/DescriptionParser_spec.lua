@@ -198,7 +198,8 @@ describe("DescriptionParser", function()
             end)
 
             it("parses heal when intermediate text contains digits (e.g. yards)", function()
-                local result = DescriptionParser.parse("heals an injured party or raid member within 40 yards for 1,029 every 2 sec")
+                local desc = "heals an injured party or raid member within 40 yards for 1,029 every 2 sec"
+                local result = DescriptionParser.parse(desc)
                 assert.is_not_nil(result)
                 assert.are.equal(1, #result)
                 assert.are.equal("heal", result[1].type)
@@ -207,13 +208,16 @@ describe("DescriptionParser", function()
             end)
 
             it("does not attach a duration for a flat heal despite trailing 'every N sec' text", function()
-                local result = DescriptionParser.parse("heals an injured party or raid member within 40 yards for 1,029 every 2 sec")
+                local desc = "heals an injured party or raid member within 40 yards for 1,029 every 2 sec"
+                local result = DescriptionParser.parse(desc)
                 assert.is_not_nil(result)
                 assert.is_nil(result[1].duration)
             end)
 
             it("parses heal in the first segment after ', then ' split", function()
-                local result = DescriptionParser.parse("Heals a friendly target for 12,345, then jumps to the most injured nearby party or raid member")
+                local desc = "Heals a friendly target for 12,345,"
+                    .. " then jumps to the most injured party or raid member"
+                local result = DescriptionParser.parse(desc)
                 assert.is_not_nil(result)
                 assert.are.equal(1, #result)
                 assert.are.equal("heal", result[1].type)
