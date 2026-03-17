@@ -19,7 +19,7 @@ function OptionsPanel.init()
         local container = Settings.CreateControlTextContainer()
         container:Add("avg", "Average")
         container:Add("dps", "DPS")
-        container:Add("dpsc", "DPS (Cost)")
+        container:Add("dpsc", "DPS (Cast)")
         container:Add("dpm", "DPM")
         return container:GetData()
     end
@@ -111,10 +111,10 @@ function OptionsPanel.init()
 
     local tooltipShowDpscSetting = Settings.RegisterAddOnSetting(
         category, "BlazDamage_tooltipShowDpsc", "tooltipShowDpsc",
-        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cost)", BD.defaults.tooltipShowDpsc
+        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cast)", BD.defaults.tooltipShowDpsc
     )
     Settings.CreateCheckbox(category, tooltipShowDpscSetting,
-        "Show DPS per resource cost in tooltips.")
+        "Show damage/healing per cast second in tooltips.")
     tooltipShowDpscSetting:SetValueChangedCallback(function()
         BD.config.tooltipShowDpsc = tooltipShowDpscSetting:GetValue()
     end)

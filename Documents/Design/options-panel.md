@@ -18,12 +18,14 @@ BD.optionsCategoryID = category:GetID()
 -- Settings registered in OptionsPanel.init() (called from ADDON_LOADED)
 -- BD.config is guaranteed non-nil when init() runs.
 local setting = Settings.RegisterAddOnSetting(
-    category, "Display Name", "variableKey", BD.config, Settings.VarType.Boolean, defaultValue
+    category, "BlazDamage_variableKey", "variableKey",
+    BD.config, Settings.VarType.Boolean, "Display Name", defaultValue
 )
 Settings.CreateCheckbox(category, setting, "Tooltip text")
 ```
 
 The variableTable pattern (`BD.config` as 4th arg) means the Blizzard Settings framework reads and writes directly to `BD.config.variableKey` when the widget value changes.
+Settings with immediate visual side effects (metric, overlays) also register explicit `SetValueChangedCallback` handlers — the framework write handles persistence; the callback handles the immediate redraw.
 
 ## Widget Types Per Setting
 
