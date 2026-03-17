@@ -24,8 +24,8 @@ function OptionsPanel.init()
         return container:GetData()
     end
     local metricSetting = Settings.RegisterAddOnSetting(
-        category, "Overlay Metric", "metric",
-        BD.config, Settings.VarType.String, BD.defaults.metric
+        category, "BlazDamage_metric", "metric",
+        BD.config, Settings.VarType.String, "Overlay Metric", BD.defaults.metric
     )
     Settings.CreateDropdown(category, metricSetting, getMetricOptions,
         "Which metric to display on action bar buttons.")
@@ -35,8 +35,8 @@ function OptionsPanel.init()
     end)
 
     local showOverlaysSetting = Settings.RegisterAddOnSetting(
-        category, "Show Overlays", "showOverlays",
-        BD.config, Settings.VarType.Boolean, BD.defaults.showOverlays
+        category, "BlazDamage_showOverlays", "showOverlays",
+        BD.config, Settings.VarType.Boolean, "Show Overlays", BD.defaults.showOverlays
     )
     Settings.CreateCheckbox(category, showOverlaysSetting,
         "Show damage/healing metrics on action bar buttons.")
@@ -46,8 +46,8 @@ function OptionsPanel.init()
     end)
 
     local fontSizeSetting = Settings.RegisterAddOnSetting(
-        category, "Overlay Font Size", "overlayFontSize",
-        BD.config, Settings.VarType.Number, BD.defaults.overlayFontSize
+        category, "BlazDamage_overlayFontSize", "overlayFontSize",
+        BD.config, Settings.VarType.Number, "Overlay Font Size", BD.defaults.overlayFontSize
     )
     local sliderOptions = Settings.CreateSliderOptions(8, 20, 1)
     Settings.CreateSlider(category, fontSizeSetting, sliderOptions, "Font size for overlay text.")
@@ -67,8 +67,8 @@ function OptionsPanel.init()
         return container:GetData()
     end
     local positionSetting = Settings.RegisterAddOnSetting(
-        category, "Overlay Position", "overlayPosition",
-        BD.config, Settings.VarType.String, BD.defaults.overlayPosition
+        category, "BlazDamage_overlayPosition", "overlayPosition",
+        BD.config, Settings.VarType.String, "Overlay Position", BD.defaults.overlayPosition
     )
     Settings.CreateDropdown(category, positionSetting, getPositionOptions,
         "Where to anchor the overlay text on each button.")
@@ -81,8 +81,8 @@ function OptionsPanel.init()
 
     -- [TOOLTIP SECTION]
     local showTooltipsSetting = Settings.RegisterAddOnSetting(
-        category, "Show Tooltips", "showTooltips",
-        BD.config, Settings.VarType.Boolean, BD.defaults.showTooltips
+        category, "BlazDamage_showTooltips", "showTooltips",
+        BD.config, Settings.VarType.Boolean, "Show Tooltips", BD.defaults.showTooltips
     )
     Settings.CreateCheckbox(category, showTooltipsSetting,
         "Show damage/healing metrics in spell tooltips.")
@@ -91,8 +91,8 @@ function OptionsPanel.init()
     end)
 
     local tooltipShowAvgSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: Average", "tooltipShowAvg",
-        BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowAvg
+        category, "BlazDamage_tooltipShowAvg", "tooltipShowAvg",
+        BD.config, Settings.VarType.Boolean, "Tooltip: Average", BD.defaults.tooltipShowAvg
     )
     Settings.CreateCheckbox(category, tooltipShowAvgSetting,
         "Show average damage/healing in tooltips.")
@@ -101,8 +101,8 @@ function OptionsPanel.init()
     end)
 
     local tooltipShowDpsSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: DPS", "tooltipShowDps",
-        BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowDps
+        category, "BlazDamage_tooltipShowDps", "tooltipShowDps",
+        BD.config, Settings.VarType.Boolean, "Tooltip: DPS", BD.defaults.tooltipShowDps
     )
     Settings.CreateCheckbox(category, tooltipShowDpsSetting, "Show DPS in tooltips.")
     tooltipShowDpsSetting:SetValueChangedCallback(function()
@@ -110,8 +110,8 @@ function OptionsPanel.init()
     end)
 
     local tooltipShowDpscSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: DPS (Cost)", "tooltipShowDpsc",
-        BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowDpsc
+        category, "BlazDamage_tooltipShowDpsc", "tooltipShowDpsc",
+        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cost)", BD.defaults.tooltipShowDpsc
     )
     Settings.CreateCheckbox(category, tooltipShowDpscSetting,
         "Show DPS per resource cost in tooltips.")
@@ -120,8 +120,8 @@ function OptionsPanel.init()
     end)
 
     local tooltipShowCritSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: Crit", "tooltipShowCrit",
-        BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowCrit
+        category, "BlazDamage_tooltipShowCrit", "tooltipShowCrit",
+        BD.config, Settings.VarType.Boolean, "Tooltip: Crit", BD.defaults.tooltipShowCrit
     )
     Settings.CreateCheckbox(category, tooltipShowCritSetting,
         "Show crit chance % in tooltips.")
@@ -130,8 +130,8 @@ function OptionsPanel.init()
     end)
 
     local tooltipShowDpmSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: Per Resource", "tooltipShowDpm",
-        BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowDpm
+        category, "BlazDamage_tooltipShowDpm", "tooltipShowDpm",
+        BD.config, Settings.VarType.Boolean, "Tooltip: Per Resource", BD.defaults.tooltipShowDpm
     )
     Settings.CreateCheckbox(category, tooltipShowDpmSetting,
         "Show damage/healing per resource in tooltips.")
@@ -147,8 +147,8 @@ function OptionsPanel.init()
         return container:GetData()
     end
     local discoveryModeSetting = Settings.RegisterAddOnSetting(
-        category, "Discovery Mode", "discoveryMode",
-        BD.config, Settings.VarType.String, BD.defaults.discoveryMode
+        category, "BlazDamage_discoveryMode", "discoveryMode",
+        BD.config, Settings.VarType.String, "Discovery Mode", BD.defaults.discoveryMode
     )
     Settings.CreateDropdown(category, discoveryModeSetting, getDiscoveryOptions,
         "Requires /reload to take effect.")
@@ -157,8 +157,8 @@ function OptionsPanel.init()
     end)
 
     local showPerfSetting = Settings.RegisterAddOnSetting(
-        category, "Show Performance Info", "showPerf",
-        BD.config, Settings.VarType.Boolean, BD.defaults.showPerf
+        category, "BlazDamage_showPerf", "showPerf",
+        BD.config, Settings.VarType.Boolean, "Show Performance Info", BD.defaults.showPerf
     )
     Settings.CreateCheckbox(category, showPerfSetting, "Log performance timing to chat.")
     showPerfSetting:SetValueChangedCallback(function()
