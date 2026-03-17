@@ -115,7 +115,7 @@ function OptionsPanel.init()
         category, "Tooltip: DPM", "tooltipShowDpm",
         BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowDpm
     )
-    Settings.CreateCheckbox(category, tooltipShowDpmSetting, "Show damage per mana in tooltips.")
+    Settings.CreateCheckbox(category, tooltipShowDpmSetting, "Show damage/healing per resource in tooltips.")
 
     -- [MISC SECTION]
     local function getDiscoveryOptions()
