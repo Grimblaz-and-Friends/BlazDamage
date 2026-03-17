@@ -59,7 +59,7 @@ Known limitations:
 ## EventHandler Integration
 
 - `PLAYER_ENTERING_WORLD` → `BD.ActionbarDiscovery.init()` + `setDirty()`
-- `ACTIONBAR_SLOT_CHANGED` → immediate `BD.StatCollector.refresh()` + `BD.OverlayRenderer.refreshSlot(slot)`
+- `ACTIONBAR_SLOT_CHANGED` → `slot == 0` (spec swap, equipment set load): `BD.OverlayRenderer.refreshAll()`; `slot > 0`: `BD.OverlayRenderer.refreshSlot(slot)`
 - All other stat-affecting events → throttled `setDirty()` path (0.1s throttle)
 
 ## Visual Spec

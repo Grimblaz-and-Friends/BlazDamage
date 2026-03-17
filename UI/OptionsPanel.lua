@@ -29,8 +29,7 @@ function OptionsPanel.init()
     )
     Settings.CreateDropdown(category, metricSetting, getMetricOptions,
         "Which metric to display on action bar buttons.")
-    metricSetting:SetValueChangedCallback(function(_, value)
-        BD.config.metric = value
+    metricSetting:SetValueChangedCallback(function()
         if BD.OverlayRenderer then BD.OverlayRenderer.refreshAll() end
     end)
 
@@ -40,8 +39,7 @@ function OptionsPanel.init()
     )
     Settings.CreateCheckbox(category, showOverlaysSetting,
         "Show damage/healing metrics on action bar buttons.")
-    showOverlaysSetting:SetValueChangedCallback(function(_, value)
-        BD.config.showOverlays = value
+    showOverlaysSetting:SetValueChangedCallback(function()
         if BD.OverlayRenderer then BD.OverlayRenderer.refreshAll() end
     end)
 
@@ -52,9 +50,7 @@ function OptionsPanel.init()
     local sliderOptions = Settings.CreateSliderOptions(8, 20, 1)
     sliderOptions:SetFormat("%d")
     Settings.CreateSlider(category, fontSizeSetting, sliderOptions, "Font size for overlay text.")
-    fontSizeSetting:SetValueChangedCallback(function(_, value)
-        local rounded = math.floor(value + 0.5)
-        BD.config.overlayFontSize = rounded
+    fontSizeSetting:SetValueChangedCallback(function()
         if BD.OverlayRenderer and BD.OverlayRenderer.applyStyle then
             BD.OverlayRenderer.applyStyle()
         end
@@ -74,8 +70,7 @@ function OptionsPanel.init()
     )
     Settings.CreateDropdown(category, positionSetting, getPositionOptions,
         "Where to anchor the overlay text on each button.")
-    positionSetting:SetValueChangedCallback(function(_, value)
-        BD.config.overlayPosition = value
+    positionSetting:SetValueChangedCallback(function()
         if BD.OverlayRenderer and BD.OverlayRenderer.applyStyle then
             BD.OverlayRenderer.applyStyle()
         end
@@ -114,7 +109,7 @@ function OptionsPanel.init()
         BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowCrit
     )
     Settings.CreateCheckbox(category, tooltipShowCritSetting,
-        "Show crit damage/healing in tooltips.")
+        "Show crit chance % in tooltips.")
 
     local tooltipShowDpmSetting = Settings.RegisterAddOnSetting(
         category, "Tooltip: DPM", "tooltipShowDpm",

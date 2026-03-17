@@ -72,9 +72,10 @@ end
 
 function OverlayRenderer.applyStyle()
     if not BD.config then return end
-    local fontSize = BD.config.overlayFontSize
-    local pos = BD.config.overlayPosition
-    local offsets = POSITION_OFFSETS[pos] or POSITION_OFFSETS[BD.defaults.overlayPosition]
+    local fontSize = math.max(8, math.min(20, BD.config.overlayFontSize))
+    local rawPos = BD.config.overlayPosition
+    local pos = POSITION_OFFSETS[rawPos] and rawPos or BD.defaults.overlayPosition
+    local offsets = POSITION_OFFSETS[pos]
     for button, entry in pairs(trackedButtons) do
         local overlay = entry.overlay
         overlay:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
@@ -89,9 +90,11 @@ function OverlayRenderer.attachOverlay(button)
 
     local slot = button.action
     local overlay = button:CreateFontString(nil, "OVERLAY")
-    local fontSize = BD.config and BD.config.overlayFontSize or BD.defaults.overlayFontSize
-    local pos = BD.config and BD.config.overlayPosition or BD.defaults.overlayPosition
-    local offsets = POSITION_OFFSETS[pos] or POSITION_OFFSETS[BD.defaults.overlayPosition]
+    local fontSize = math.max(8, math.min(20,
+        (BD.config and BD.config.overlayFontSize or BD.defaults.overlayFontSize)))
+    local rawPos = BD.config and BD.config.overlayPosition or BD.defaults.overlayPosition
+    local pos = POSITION_OFFSETS[rawPos] and rawPos or BD.defaults.overlayPosition
+    local offsets = POSITION_OFFSETS[pos]
     overlay:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
     overlay:SetTextColor(1, 1, 1)
     overlay:SetPoint(pos, button, pos, offsets[1], offsets[2])

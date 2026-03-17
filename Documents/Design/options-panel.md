@@ -54,8 +54,6 @@ Callbacks are only registered for settings with immediate side effects:
 | `discoveryMode` | None — effective on next `/reload` |
 | `showPerf` | None — effective on next refresh cycle |
 
-`overlayFontSize` callback applies canonical rounding: `math.floor(value + 0.5)`.
-
 ## Category ID Storage
 
 `BD.optionsCategoryID = category:GetID()` is set at file-load time and referenced by the slash handler: `Settings.OpenToCategory(BD.optionsCategoryID)`.
