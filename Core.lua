@@ -17,6 +17,7 @@ frame:SetScript("OnEvent", function(_, event, name)
             end
         end
         BD.config = BlazDamageDB
+        if BD.OptionsPanel then BD.OptionsPanel.init() end
         print("|cFF4FC3F7BlazDamage|r v" .. BD.VERSION .. " loaded.")
     end
 end)
@@ -25,18 +26,20 @@ end)
 SLASH_BLAZDAMAGE1 = "/blazdamage"
 SLASH_BLAZDAMAGE2 = "/bd"
 local PREFIX = BD.PREFIX
+local function openOptionsPanel()
+    if BD.optionsCategoryID then
+        Settings.OpenToCategory(BD.optionsCategoryID)
+    else
+        print(PREFIX .. " Options panel not available.")
+    end
+end
 SlashCmdList["BLAZDAMAGE"] = function(msg)
     msg = (msg or ""):lower()
     local validMetrics = table.concat(BD.VALID_METRICS, ", ")
 
     if msg == "" then
         if not BD.config then print(PREFIX .. " Not ready yet.") return end
-        print(PREFIX .. " v" .. BD.VERSION)
-        print(PREFIX .. "  Metric:    " .. BD.config.metric)
-        print(PREFIX .. "  Overlays:  " .. (BD.config.showOverlays and "Enabled" or "Disabled"))
-        print(PREFIX .. "  Tooltips:  " .. (BD.config.showTooltips and "Enabled" or "Disabled"))
-        print(PREFIX .. "  Discovery: " .. BD.config.discoveryMode)
-        print(PREFIX .. "  Perf:      " .. (BD.config.showPerf and "Enabled" or "Disabled"))
+        openOptionsPanel()
         return
     end
 
@@ -90,15 +93,35 @@ SlashCmdList["BLAZDAMAGE"] = function(msg)
             print(PREFIX .. " Unknown discovery mode: " .. arg .. ". Valid: auto, update")
         end
 
+    elseif cmd == "options" then
+        openOptionsPanel()
+
+    elseif cmd == "status" then
+        print(PREFIX .. " v" .. BD.VERSION)
+        print(PREFIX .. "  Metric:     " .. BD.config.metric)
+        print(PREFIX .. "  Overlays:   " .. (BD.config.showOverlays and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Tooltips:   " .. (BD.config.showTooltips and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Font Size:  " .. BD.config.overlayFontSize)
+        print(PREFIX .. "  Position:   " .. BD.config.overlayPosition)
+        print(PREFIX .. "  Tip Avg:    " .. (BD.config.tooltipShowAvg ~= false and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Tip DPS:    " .. (BD.config.tooltipShowDps ~= false and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Tip DPSC:   " .. (BD.config.tooltipShowDpsc ~= false and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Tip Crit:   " .. (BD.config.tooltipShowCrit ~= false and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Tip DPM:    " .. (BD.config.tooltipShowDpm ~= false and "Enabled" or "Disabled"))
+        print(PREFIX .. "  Discovery:  " .. BD.config.discoveryMode)
+        print(PREFIX .. "  Perf:       " .. (BD.config.showPerf and "Enabled" or "Disabled"))
+
     elseif cmd == "help" then
         print(PREFIX .. " Commands:")
-        print(PREFIX .. "  /bd                 — show settings")
-        print(PREFIX .. "  /bd metric <name>   — set overlay metric (" .. validMetrics .. ")")
-        print(PREFIX .. "  /bd overlay         — toggle overlays")
-        print(PREFIX .. "  /bd tooltip         — toggle tooltips")
-        print(PREFIX .. "  /bd perf            — toggle performance logging")
+        print(PREFIX .. "  /bd                         — open options panel")
+        print(PREFIX .. "  /bd options                 — open options panel")
+        print(PREFIX .. "  /bd status                  — show all settings")
+        print(PREFIX .. "  /bd metric <name>           — set overlay metric (" .. validMetrics .. ")")
+        print(PREFIX .. "  /bd overlay                 — toggle overlays")
+        print(PREFIX .. "  /bd tooltip                 — toggle tooltips")
+        print(PREFIX .. "  /bd perf                    — toggle performance logging")
         print(PREFIX .. "  /bd discovery [auto|update] — show/set discovery mode")
-        print(PREFIX .. "  /bd help            — show this help")
+        print(PREFIX .. "  /bd help                    — show this help")
 
     else
         print(PREFIX .. " Unknown command: " .. cmd .. ". Type /bd help for commands.")

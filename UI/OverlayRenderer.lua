@@ -6,6 +6,13 @@ if type(BD) ~= "table" then BD = {} end
 
 local OverlayRenderer = {}
 
+local POSITION_OFFSETS = {
+    TOPLEFT     = { 2, -2},
+    TOPRIGHT    = {-2, -2},
+    BOTTOMLEFT  = { 2,  2},
+    BOTTOMRIGHT = {-2,  2},
+}
+
 local trackedButtons = {}   -- keyed by button frame → { overlay = FontString, slot = number }
 local slotToButton   = {}   -- keyed by slot number → button frame (reverse index)
 
@@ -63,15 +70,34 @@ local function updateButton(button, entry)
     overlay:Show()
 end
 
+function OverlayRenderer.applyStyle()
+    if not BD.config then return end
+    local fontSize = math.max(8, math.min(20, BD.config.overlayFontSize))
+    local rawPos = BD.config.overlayPosition
+    local pos = POSITION_OFFSETS[rawPos] and rawPos or BD.defaults.overlayPosition
+    local offsets = POSITION_OFFSETS[pos]
+    for button, entry in pairs(trackedButtons) do
+        local overlay = entry.overlay
+        overlay:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
+        overlay:ClearAllPoints()
+        overlay:SetPoint(pos, button, pos, offsets[1], offsets[2])
+    end
+end
+
 function OverlayRenderer.attachOverlay(button)
     if not button then return end
     if trackedButtons[button] then return end
 
     local slot = button.action
     local overlay = button:CreateFontString(nil, "OVERLAY")
-    overlay:SetFontObject(NumberFontNormalSmall)
+    local fontSize = math.max(8, math.min(20,
+        (BD.config and BD.config.overlayFontSize or BD.defaults.overlayFontSize)))
+    local rawPos = BD.config and BD.config.overlayPosition or BD.defaults.overlayPosition
+    local pos = POSITION_OFFSETS[rawPos] and rawPos or BD.defaults.overlayPosition
+    local offsets = POSITION_OFFSETS[pos]
+    overlay:SetFont(STANDARD_TEXT_FONT, fontSize, "OUTLINE")
     overlay:SetTextColor(1, 1, 1)
-    overlay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
+    overlay:SetPoint(pos, button, pos, offsets[1], offsets[2])
 
     trackedButtons[button] = { overlay = overlay, slot = slot }
     if slot then slotToButton[slot] = button end

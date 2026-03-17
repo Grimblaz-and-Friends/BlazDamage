@@ -24,7 +24,9 @@
   "Lua.diagnostics.globals": [
     "ElvUI",
     "SlashCmdList",
-    "TooltipDataProcessor"
+    "TooltipDataProcessor",
+    "Settings",
+    "STANDARD_TEXT_FONT"
   ],
   "Lua.runtime.version": "Lua 5.1",
   "Lua.runtime.builtin": {

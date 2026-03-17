@@ -16,6 +16,7 @@ Defines the feature boundary for BlazDamage v1.
 - **Actionbar overlays** — Numeric display on each discoverable ActionButton frame
 - **Actionbar discovery** — Generic hook via `hooksecurefunc("ActionButton_Update", ...)` — works with default UI and common third-party bar addons
 - **Overlay updates** — Refresh overlays on PLAYER_ENTERING_WORLD, PLAYER_EQUIPMENT_CHANGED, UNIT_AURA (player), ACTIONBAR_SLOT_CHANGED
+- **Options panel** — Blizzard Settings API panel with all 12 settings; accessible via Interface Options → AddOns → BlazDamage and `/bd`
 
 ### Tooltip Enrichment
 
@@ -31,7 +32,6 @@ These features are intentionally deferred:
 | Healing prediction | Requires separate healing metric pipeline — v1.1 milestone |
 | Multi-target AoE calculations | Complex — depends on target count and cleave models |
 | WeakAuras / custom frame integration | Out of scope for generic hook approach |
-| In-game options panel | Configuration via SavedVariables only in v1 |
 | Masque / button skinning integration | Visual enhancement only — no impact on overlay correctness |
 | Per-spell override data tables | Only added if specific spells prove systematically wrong in testing |
 
