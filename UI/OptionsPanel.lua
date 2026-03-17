@@ -112,7 +112,7 @@ function OptionsPanel.init()
         "Show crit chance % in tooltips.")
 
     local tooltipShowDpmSetting = Settings.RegisterAddOnSetting(
-        category, "Tooltip: DPM", "tooltipShowDpm",
+        category, "Tooltip: Per Resource", "tooltipShowDpm",
         BD.config, Settings.VarType.Boolean, BD.defaults.tooltipShowDpm
     )
     Settings.CreateCheckbox(category, tooltipShowDpmSetting, "Show damage/healing per resource in tooltips.")
