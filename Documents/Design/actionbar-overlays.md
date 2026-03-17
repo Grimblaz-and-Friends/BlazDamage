@@ -23,13 +23,18 @@ For each tracked actionbar button, each refresh cycle:
 ## OverlayRenderer API
 
 **`BD.OverlayRenderer.attachOverlay(button)`**
-Attaches a FontString overlay to a button frame. Idempotent — no-op if already attached. Anchored `BOTTOMRIGHT(-2, 2)`, font `NumberFontNormalSmall`, color white.
+Attaches a FontString overlay to a button frame. Idempotent — no-op if already attached. Anchored to the
+configured position (default `BOTTOMRIGHT`), with offsets from `POSITION_OFFSETS`, font `STANDARD_TEXT_FONT`
+at configured size (default 10), color white. Font and position read from `BD.config` with `BD.defaults` fallback.
 
 **`BD.OverlayRenderer.refreshAll()`**
 Refreshes all tracked buttons. Hides all overlays if `BD.config.showOverlays == false`.
 
 **`BD.OverlayRenderer.refreshSlot(slot)`**
 Refreshes the single button mapped to a specific actionbar slot. Used for immediate `ACTIONBAR_SLOT_CHANGED` updates.
+
+**`BD.OverlayRenderer.applyStyle()`**
+Re-applies font (size, face) and position anchor to all tracked overlays from current `BD.config` values. Called immediately by the options panel `OnValueChanged` callbacks for `overlayFontSize` and `overlayPosition`. Uses `ClearAllPoints()` before re-anchoring.
 
 ## ActionbarDiscovery API
 
@@ -59,8 +64,8 @@ Known limitations:
 
 ## Visual Spec
 
-- Position: `BOTTOMRIGHT` of button frame, offset `(-2, 2)`
-- Font: `NumberFontNormalSmall`
+- Position: user-configurable via options panel; default `BOTTOMRIGHT`; all four corners supported (`TOPLEFT`, `TOPRIGHT`, `BOTTOMLEFT`, `BOTTOMRIGHT`) with appropriate offsets
+- Font: `STANDARD_TEXT_FONT` at user-configurable size (default 10, range 8–20)
 - Color: white `(1, 1, 1)`
 - Draw layer: `OVERLAY`
 

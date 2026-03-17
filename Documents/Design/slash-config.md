@@ -10,7 +10,9 @@ The slash handler parses a `cmd` / `arg` pair from the raw message string and di
 
 | Command | Effect |
 | --- | --- |
-| `/bd` | Show version, metric, overlay status, tooltip status, discovery mode, perf status |
+| `/bd` | Open options panel (alias for `/bd options`) |
+| `/bd options` | Open the BlazDamage options panel in Interface Options |
+| `/bd status` | Print all 12 settings to chat |
 | `/bd metric` | Show current metric and the list of valid options |
 | `/bd metric <name>` | Set display metric; validates against `BD.VALID_METRICS`; calls `refreshAll()` |
 | `/bd overlay` | Toggle `BD.config.showOverlays`; calls `refreshAll()` |
@@ -28,6 +30,8 @@ Unknown commands print: `Unknown command: <cmd>. Type /bd help for commands.`
 - **`tooltip`**: no refresh; enrichment is re-evaluated on the next tooltip hover.
 - **`discovery`**: requires `/reload`; `ActionbarDiscovery.init()` runs once per session on `PLAYER_ENTERING_WORLD`.
 - **`perf`**: no refresh needed — instrumentation only; the toggle takes effect immediately on the next refresh cycle.
+- **`options`**: opens the Blizzard Interface Options panel to the BlazDamage category.
+- **`status`**: no refresh; reads `BD.config` state at the time of the call.
 
 ## Config Keys
 
@@ -41,6 +45,13 @@ All settings live on `BD.config` (= `BlazDamageDB` after `ADDON_LOADED`). New ke
 | `discoveryMode` | `"auto"` | string | Actionbar discovery strategy (`"auto"` or `"update"`) |
 | `showPerf` | `false` | boolean | Whether performance timing output is printed on each overlay refresh |
 | `critMult` | `2.0` | number | Crit damage multiplier (not slash-configurable; placeholder for Issue #22) |
+| `overlayFontSize` | `10` | number | Font size for overlay text (8–20) |
+| `overlayPosition` | `"BOTTOMRIGHT"` | string | Corner anchor for overlay text (`"TOPLEFT"`, `"TOPRIGHT"`, `"BOTTOMLEFT"`, `"BOTTOMRIGHT"`) |
+| `tooltipShowAvg` | `true` | boolean | Show Avg metric line in tooltips |
+| `tooltipShowDps` | `true` | boolean | Show DPS/HPS metric line in tooltips |
+| `tooltipShowDpsc` | `true` | boolean | Show DPSC/HPSC metric line in tooltips |
+| `tooltipShowCrit` | `true` | boolean | Show Crit% metric line in tooltips |
+| `tooltipShowDpm` | `true` | boolean | Show resource-efficiency metric line in tooltips |
 
 ## Namespace Constants
 
@@ -68,7 +79,7 @@ SlashCmdList["BLAZDAMAGE"] = function(msg) ... end
 local cmd, arg = string.match(msg, "^(%S+)%s*(.-)%s*$")
 ```
 
-An empty message (`""`) is handled as its own branch before the split, printing current settings.
+An empty message (`""`) is handled as its own branch before the split, opening the options panel.
 
 **Not-ready guard** — All commands except `help` check `BD.config` on entry:
 
@@ -98,5 +109,5 @@ The list is a configuration constant (user-visible metric names) that belongs wi
 **Metric change is live; discovery change requires reload**
 `OverlayRenderer.refreshAll()` is safe to call at any time and instantly updates all overlays. `ActionbarDiscovery.init()` is designed to run once per session (idempotent at startup, not re-entrant), so a reload is the correct mechanism for changing discovery mode.
 
-**No separate config UI for v1**
-The slash command interface covers all configurable settings without requiring an AceConfig or options panel. A GUI options panel is tracked on the roadmap but deferred until the core engine is stable.
+**`/bd` opens options panel; `/bd status` prints settings**
+`/bd` now opens the Blizzard Interface Options panel to the BlazDamage category, following WoW UI convention where bare addon slash commands open the settings panel. The previous "print current settings" behavior is preserved as `/bd status`.

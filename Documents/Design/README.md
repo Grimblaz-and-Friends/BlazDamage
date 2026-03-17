@@ -36,3 +36,5 @@ Issue-based names create orphan documents after the issue closes. Domain-based n
 
 Architecture Decision Records (`Documents/Decisions/`) capture one-time architectural choices.
 Design documents capture ongoing feature design. Both are permanent; neither gets deleted.
+
+See [options-panel.md](options-panel.md) for the Blizzard Settings API panel design.

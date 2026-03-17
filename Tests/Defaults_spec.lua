@@ -32,4 +32,32 @@ describe("BD.defaults contract", function()
     it("showPerf defaults to false", function()
         assert.is_false(Defaults.defaults.showPerf)
     end)
+
+    it("overlayFontSize defaults to 10", function()
+        assert.are.equal(10, Defaults.defaults.overlayFontSize)
+    end)
+
+    it("overlayPosition defaults to 'BOTTOMRIGHT'", function()
+        assert.are.equal("BOTTOMRIGHT", Defaults.defaults.overlayPosition)
+    end)
+
+    it("tooltipShowAvg defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowAvg)
+    end)
+
+    it("tooltipShowDps defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowDps)
+    end)
+
+    it("tooltipShowDpsc defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowDpsc)
+    end)
+
+    it("tooltipShowCrit defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowCrit)
+    end)
+
+    it("tooltipShowDpm defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowDpm)
+    end)
 end)

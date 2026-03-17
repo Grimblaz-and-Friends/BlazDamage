@@ -35,24 +35,35 @@ local function enrichCallback(tooltip, tooltipData)
     local totals = result.totals
     local healOnly = BD.Calculator.isHealOnly(result.components)
 
-    tooltip:AddLine("|cFFFFFF00BlazDamage:|r")
-    tooltip:AddLine("  Avg: " .. BD.Calculator.formatNumber(totals.avg))
-    if totals.dps then
+    local lines = {}
+
+    if BD.config.tooltipShowAvg ~= false then
+        lines[#lines + 1] = "  Avg: " .. BD.Calculator.formatNumber(totals.avg)
+    end
+    if BD.config.tooltipShowDps ~= false and totals.dps then
         local dpsLabel = healOnly and "HPS" or "DPS"
-        tooltip:AddLine("  " .. dpsLabel .. ": " .. BD.Calculator.formatNumber(totals.dps))
+        lines[#lines + 1] = "  " .. dpsLabel .. ": " .. BD.Calculator.formatNumber(totals.dps)
     end
-    if totals.dpsc and totals.dps then
+    if BD.config.tooltipShowDpsc ~= false and totals.dpsc and totals.dps then
         local dpscLabel = healOnly and "HPSC" or "DPSC"
-        tooltip:AddLine("  " .. dpscLabel .. ": " .. BD.Calculator.formatNumber(totals.dpsc))
+        lines[#lines + 1] = "  " .. dpscLabel .. ": " .. BD.Calculator.formatNumber(totals.dpsc)
     end
-    tooltip:AddLine("  Crit: " .. string.format("%.1f%%", playerStats.critChance * 100))
+    if BD.config.tooltipShowCrit ~= false then
+        lines[#lines + 1] = "  Crit: " .. string.format("%.1f%%", playerStats.critChance * 100)
+    end
     local label = BD.Calculator.resourceLabel(spellStats.resourceType)
-    if label and totals.dpm then
+    if BD.config.tooltipShowDpm ~= false and label and totals.dpm then
         local displayLabel = healOnly and (string.gsub(label, "^D", "H")) or label
-        tooltip:AddLine("  " .. displayLabel .. ": " .. BD.Calculator.formatNumber(totals.dpm))
+        lines[#lines + 1] = "  " .. displayLabel .. ": " .. BD.Calculator.formatNumber(totals.dpm)
     end
 
-    tooltip:Show()
+    if #lines > 0 then
+        tooltip:AddLine("|cFFFFFF00BlazDamage:|r")
+        for _, line in ipairs(lines) do
+            tooltip:AddLine(line)
+        end
+        tooltip:Show()
+    end
 end
 
 TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, enrichCallback)

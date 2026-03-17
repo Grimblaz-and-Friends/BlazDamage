@@ -55,6 +55,9 @@ stds.wow = {
         -- Addon loading
         "ElvUI",
         "IsAddOnLoaded",
+        -- Settings panel
+        "Settings",
+        "STANDARD_TEXT_FONT",
     },
 }
 

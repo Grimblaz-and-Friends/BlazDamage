@@ -21,20 +21,20 @@ The pipeline reuses the same flow established in `UI/OverlayRenderer.lua`:
 5. `BD.DescriptionParser.parse(description)` — return if nil or empty
 6. Merge `playerStats` + `spellStats` into `stats` table for Calculator
 7. `BD.Calculator.computeMetrics(parsed, stats)` — return if nil
-8. Append tooltip lines via `tooltip:AddLine()`
-9. `tooltip:Show()` to resize the tooltip frame after line addition
+8. Collect metric lines conditionally (per-toggle guards using `~= false`); header and `tooltip:Show()` only emitted when at least one line is collected
+9. `tooltip:Show()` to resize the tooltip frame — only called when at least one metric line was added
 
 ## Tooltip Line Format
 
 ```text
-|cFFFFFF00BlazDamage:|r        ← gold header (always)
-  Avg: 14.3k                   ← always (avg is never nil for a non-nil result)
-  DPS: 8.2k                    ← when totals.dps non-nil (damage spell or mixed)
-  DPSC: 9.1k                   ← when totals.dpsc non-nil and totals.dps non-nil
-  HPS: 12.1k                   ← when totals.dps non-nil (heal-only spell; label swapped from DPS)
-  HPSC: 13.4k                  ← when totals.dpsc and totals.dps non-nil (heal-only, cast time > 0)
-  Crit: 18.5%                  ← always (from StatCollector.getPlayerStats().critChance * 100)
-  DPM: 650                     ← when spell has a resource cost (label from Calculator.resourceLabel)
+|cFFFFFF00BlazDamage:|r        ← header (shown when at least one metric line is added)
+  Avg: 14.3k                   ← when tooltipShowAvg ~= false
+  DPS: 8.2k                    ← when tooltipShowDps ~= false and totals.dps non-nil
+  DPSC: 9.1k                   ← when tooltipShowDpsc ~= false and totals.dpsc and totals.dps non-nil
+  HPS: 12.1k                   ← when tooltipShowDps ~= false and heal-only spell
+  HPSC: 13.4k                  ← when tooltipShowDpsc ~= false, heal-only, and cast time > 0
+  Crit: 18.5%                  ← when tooltipShowCrit ~= false
+  DPM: 650                     ← when tooltipShowDpm ~= false and spell has resource cost
   HPM: 650                     ← heal-only variant of the resource efficiency line
 ```
 
@@ -55,6 +55,7 @@ The resource efficiency line label adapts to the spell's resource type:
 
 | Scenario | Behaviour |
 | --- | --- |
+| All `tooltipShow*` toggles disabled | Header and all lines suppressed; `tooltip:Show()` not called — original tooltip unchanged |
 | Instant-cast spell (castTime = 0) | `DPSC` line omitted (nil guard); `DPS` uses GCD floor |
 | Costless spell (resourceType = nil, resourceCost = 0) | Resource efficiency line omitted (label = nil, dpm = nil) |
 | Heal-only spell | `HPS` and `HPSC` shown (labels swapped from DPS/DPSC); `HPM/HPR/HPRP/HPE/HPF` shown when spell has resource cost. `HPSC` suppressed when castTime = 0. |
