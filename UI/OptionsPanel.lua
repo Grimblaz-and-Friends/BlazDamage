@@ -48,7 +48,6 @@ function OptionsPanel.init()
         BD.config, Settings.VarType.Number, BD.defaults.overlayFontSize
     )
     local sliderOptions = Settings.CreateSliderOptions(8, 20, 1)
-    sliderOptions:SetFormat("%d")
     Settings.CreateSlider(category, fontSizeSetting, sliderOptions, "Font size for overlay text.")
     fontSizeSetting:SetValueChangedCallback(function()
         if BD.OverlayRenderer and BD.OverlayRenderer.applyStyle then
