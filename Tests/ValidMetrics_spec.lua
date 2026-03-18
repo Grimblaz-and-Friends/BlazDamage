@@ -22,6 +22,7 @@ describe("ValidMetrics contract", function()
             castTime     = 1.5,
             gcd          = 1.5,
             resourceCost = 100,
+            cooldown     = 100,
         }
 
         -- Act
@@ -47,6 +48,7 @@ describe("ValidMetrics contract", function()
             castTime     = 1.5,
             gcd          = 1.5,
             resourceCost = 100,
+            cooldown     = 100,
         }
 
         -- Act

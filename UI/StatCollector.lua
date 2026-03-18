@@ -39,6 +39,7 @@ function StatCollector.getSpellStats(spellID)
         castTime     = (spellInfo and spellInfo.castTime or 0) / 1000,
         resourceCost = (costs and costs[1] and costs[1].cost) or 0,
         resourceType = costs and costs[1] and costs[1].type,
+        cooldown     = (GetSpellBaseCooldown(spellID) or 0) / 1000,
         description  = description,
     }
     spellCache[spellID] = stats

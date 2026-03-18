@@ -78,7 +78,7 @@ could produce a spurious component (e.g., `"Increases healing done for 30 sec"` 
 
 ```lua
 -- stats shape:
-{ critChance = number, critMult = number, castTime = number, gcd = number, resourceCost = number? }
+{ critChance = number, critMult = number, castTime = number, gcd = number, resourceCost = number?, cooldown = number? }
 ```
 
 `critMult` is the **full multiplier** — `2.0` means 200% (a 100% crit bonus). This matches how WoW reports it.
@@ -97,11 +97,12 @@ avg = (min + max) / 2 × (1 + critChance × (critMult − 1))
 
 `timeOnTarget = max(castTime, gcd)` — the window the player is "occupied" casting or waiting on the GCD.
 
-| Metric | Formula              | Nil guard                           |
-| ------ | -------------------- | ----------------------------------- |
-| `dps`  | `avg / timeOnTarget` | nil when `timeOnTarget == 0`        |
-| `dpsc` | `avg / castTime`     | nil when `castTime == 0`            |
-| `dpm`  | `avg / resourceCost` | nil when `resourceCost` is nil or 0 |
+| Metric  | Formula               | Nil guard                                              |
+| ------- | --------------------- | ------------------------------------------------------ |
+| `dps`   | `avg / timeOnTarget`  | nil when `timeOnTarget == 0`                           |
+| `dpsc`  | `avg / castTime`      | nil when `castTime == 0`                               |
+| `dpscd` | `totalAvg / cooldown` | nil when `cooldown` is nil or 0 (totals only)          |
+| `dpm`   | `avg / resourceCost`  | nil when `resourceCost` is nil or 0                    |
 
 All nil guards are defensive: returning `nil` instead of `0` prevents the UI from displaying misleading zeroes.
 
@@ -120,12 +121,13 @@ Heal components compute the same throughput metrics as `direct`: per-component `
     components = {
         { avg = number, type = string, dps = number?, dpsc = number?, dpm = number?, dotDps = number? }
     },
-    totals = { avg = number, dps = number?, dpsc = number?, dpm = number? }
+    totals = { avg = number, dps = number?, dpsc = number?, dpscd = number?, dpm = number? }
 }
 ```
 
 `totals.dps` is nil when no component contributed a non-nil dps value.
 `totals.dpsc` is nil when `stats.castTime` is 0.
+`totals.dpscd` is nil when `stats.cooldown` is nil or 0. DPSCD uses `GetSpellBaseCooldown`, which returns the base (unhasted) cooldown — for haste-affected cooldowns, the metric may overstate the effective cooldown. DPSCD is a totals-only metric; it does not appear in per-component results.
 `totals.dpm` is nil when `stats.resourceCost` is nil or 0.
 
 Per-component `dpsc` and `dpm` are populated for `direct` and `heal` components; they are `nil` for `dot` and `channel` components. All component types (direct, heal, dot, channel) contribute their `avg` to `totalAvg`; this accumulator drives `totals.dpsc` and `totals.dpm`.

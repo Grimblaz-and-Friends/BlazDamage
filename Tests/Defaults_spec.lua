@@ -60,4 +60,8 @@ describe("BD.defaults contract", function()
     it("tooltipShowDpm defaults to true", function()
         assert.is_true(Defaults.defaults.tooltipShowDpm)
     end)
+
+    it("tooltipShowDpscd defaults to true", function()
+        assert.is_true(Defaults.defaults.tooltipShowDpscd)
+    end)
 end)

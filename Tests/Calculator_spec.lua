@@ -17,6 +17,7 @@ describe("Calculator", function()
             castTime     = 2.0,
             gcd          = 1.5,
             resourceCost = 100,
+            cooldown     = 10,
         }
 
         -- -----------------------------------------------------------------
@@ -270,6 +271,53 @@ describe("Calculator", function()
                 local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
                 assert.are.equal(1.25, result.components[1].dpm)
                 assert.are.equal(62.5, result.components[1].dpsc)
+            end)
+        end)
+
+        -- -----------------------------------------------------------------
+        -- DPSCD (damage per second of cooldown, totals only)
+        --   stdStats: cooldown=10, totalAvg=125 → dpscd = 125 / 10 = 12.5
+        -- -----------------------------------------------------------------
+        describe("DPSCD totals", function()
+            it("computes totals.dpscd as totalAvg divided by cooldown", function()
+                -- avg=125 (crit applied), cooldown=10 → dpscd = 12.5
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stdStats)
+                assert.are.equal(12.5, result.totals.dpscd)
+            end)
+
+            it("returns nil totals.dpscd when cooldown is zero", function()
+                local stats = {
+                    critChance = 0.25, critMult = 2.0, castTime = 2.0,
+                    gcd = 1.5, resourceCost = 100, cooldown = 0,
+                }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
+                assert.is_nil(result.totals.dpscd)
+            end)
+
+            it("returns nil totals.dpscd when cooldown field is absent", function()
+                local stats = { critChance = 0.25, critMult = 2.0, castTime = 2.0, gcd = 1.5, resourceCost = 100 }
+                local result = Calculator.computeMetrics({ { min = 100, max = 100, type = "direct" } }, stats)
+                assert.is_nil(result.totals.dpscd)
+            end)
+
+            it("multi-component: dpscd uses combined totalAvg divided by cooldown", function()
+                -- direct avg=125 (crit), dot avg=750 (crit), totalAvg=875 → dpscd = 875 / 10 = 87.5
+                local mixedComponents = {
+                    { min = 100, max = 100, type = "direct" },
+                    { min = 600, max = 600, type = "dot", duration = 6 },
+                }
+                local result = Calculator.computeMetrics(mixedComponents, stdStats)
+                assert.are.equal(87.5, result.totals.dpscd)
+            end)
+
+            it("heal-only: totals.dpscd computed from totalAvg divided by cooldown", function()
+                -- avg=1000 (critChance=0), cooldown=10 → dpscd = 100.0
+                local stats = {
+                    critChance = 0, critMult = 2.0, castTime = 1.5,
+                    gcd = 1.5, resourceCost = 200, cooldown = 10,
+                }
+                local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
+                assert.are.equal(100.0, result.totals.dpscd)
             end)
         end)
 
