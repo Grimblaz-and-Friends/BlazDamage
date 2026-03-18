@@ -12,7 +12,7 @@ The slash handler parses a `cmd` / `arg` pair from the raw message string and di
 | --- | --- |
 | `/bd` | Open options panel (alias for `/bd options`) |
 | `/bd options` | Open the BlazDamage options panel in Interface Options |
-| `/bd status` | Print all 12 settings to chat |
+| `/bd status` | Print all 13 settings to chat |
 | `/bd metric` | Show current metric and the list of valid options |
 | `/bd metric <name>` | Set display metric; validates against `BD.VALID_METRICS`; calls `refreshAll()` |
 | `/bd overlay` | Toggle `BD.config.showOverlays`; calls `refreshAll()` |
@@ -50,6 +50,7 @@ All settings live on `BD.config` (= `BlazDamageDB` after `ADDON_LOADED`). New ke
 | `tooltipShowAvg` | `true` | boolean | Show Avg metric line in tooltips |
 | `tooltipShowDps` | `true` | boolean | Show DPS/HPS metric line in tooltips |
 | `tooltipShowDpsc` | `true` | boolean | Show DPSC/HPSC metric line in tooltips |
+| `tooltipShowDpscd` | `true` | boolean | Show DPSCD/HPSCD metric line in tooltips |
 | `tooltipShowCrit` | `true` | boolean | Show Crit% metric line in tooltips |
 | `tooltipShowDpm` | `true` | boolean | Show resource-efficiency metric line in tooltips |
 
@@ -57,7 +58,7 @@ All settings live on `BD.config` (= `BlazDamageDB` after `ADDON_LOADED`). New ke
 
 Defined in `Config/Defaults.lua`, available on the `BD` namespace as soon as `Defaults.lua` loads:
 
-**`BD.VALID_METRICS`** `= {"avg", "dps", "dpsc", "dpm"}`
+**`BD.VALID_METRICS`** `= {"avg", "dps", "dpsc", "dpscd", "dpm"}`
 The ordered list of valid metric names. Must stay in sync with the keys returned in `Calculator.computeMetrics().totals`. A contract test in `Tests/ValidMetrics_spec.lua` guards against drift.
 
 **`BD.PREFIX`** `= "|cFFFFFF00BlazDamage:|r"`
