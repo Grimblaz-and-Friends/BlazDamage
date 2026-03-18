@@ -127,7 +127,7 @@ Heal components compute the same throughput metrics as `direct`: per-component `
 
 `totals.dps` is nil when no component contributed a non-nil dps value.
 `totals.dpsc` is nil when `stats.castTime` is 0.
-`totals.dpscd` is nil when `stats.cooldown` is nil or 0. DPSCD uses `GetSpellBaseCooldown`, which returns the base (unhasted) cooldown — for haste-affected cooldowns, the metric may overstate the effective cooldown. DPSCD is a totals-only metric; it does not appear in per-component results.
+`totals.dpscd` is nil when `stats.cooldown` is nil or 0. `stats.cooldown` is populated by `UI/StatCollector` calling `GetSpellBaseCooldown`, which returns the base (unhasted) cooldown in milliseconds — for haste-affected cooldowns, the reported metric may overstate the effective cooldown. DPSCD is a totals-only metric; it does not appear in per-component results.
 `totals.dpm` is nil when `stats.resourceCost` is nil or 0.
 
 Per-component `dpsc` and `dpm` are populated for `direct` and `heal` components; they are `nil` for `dot` and `channel` components. All component types (direct, heal, dot, channel) contribute their `avg` to `totalAvg`; this accumulator drives `totals.dpsc` and `totals.dpm`.
@@ -181,6 +181,6 @@ Tests live in `Tests/Calculator_spec.lua` and `Tests/DescriptionParser_spec.lua`
 - [ ] Parsed components include `type`, `min`, `max`, and optional `duration`
 - [x] Heal components carry `type = "heal"`; per-component `dps`, `dpsc`, `dpm` computed; contribute to `totals.dps`
 - [ ] `Calculator.computeMetrics()` returns `nil` when given nil or empty components
-- [ ] All time-normalised metrics (`dps`, `dpsc`, `dpm`) are `nil` (not `0`) when their divisor is zero
+- [ ] All time-normalised metrics (`dps`, `dpsc`, `dpscd`, `dpm`) are `nil` (not `0`) when their divisor is zero or absent
 - [ ] Both modules load via `require()` in busted without errors
 - [ ] `luacheck .` passes with zero warnings on both modules

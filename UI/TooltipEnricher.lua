@@ -49,6 +49,7 @@ local function enrichCallback(tooltip, tooltipData)
         local dpscLabel = healOnly and "HPSC" or "DPSC"
         lines[#lines + 1] = "  " .. dpscLabel .. ": " .. BD.Calculator.formatNumber(totals.dpsc)
     end
+    -- Unlike dpsc, no totals.dps cross-check: dpscd is nil whenever cooldown is absent or 0.
     if BD.config.tooltipShowDpscd ~= false and totals.dpscd then
         local dpscdLabel = healOnly and "HPSCD" or "DPSCD"
         lines[#lines + 1] = "  " .. dpscdLabel .. ": " .. BD.Calculator.formatNumber(totals.dpscd)

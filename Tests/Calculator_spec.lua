@@ -300,6 +300,17 @@ describe("Calculator", function()
                 assert.is_nil(result.totals.dpscd)
             end)
 
+            it("returns nil totals.dpscd when cooldown is negative", function()
+                local stats = {
+                    critChance = 0.25, critMult = 2.0, castTime = 2.0,
+                    gcd = 1.5, resourceCost = 100, cooldown = -5,
+                }
+                local result = Calculator.computeMetrics(
+                    { { min = 100, max = 100, type = "direct" } }, stats
+                )
+                assert.is_nil(result.totals.dpscd)
+            end)
+
             it("multi-component: dpscd uses combined totalAvg divided by cooldown", function()
                 -- direct avg=125 (crit), dot avg=750 (crit), totalAvg=875 → dpscd = 875 / 10 = 87.5
                 local mixedComponents = {
@@ -318,6 +329,21 @@ describe("Calculator", function()
                 }
                 local result = Calculator.computeMetrics({ { min = 1000, max = 1000, type = "heal" } }, stats)
                 assert.are.equal(100.0, result.totals.dpscd)
+            end)
+
+            it("dpscd is totals-only: components carry no dpscd field", function()
+                local result = Calculator.computeMetrics(
+                    { { min = 100, max = 100, type = "direct" } }, stdStats
+                )
+                assert.is_nil(result.components[1].dpscd)
+            end)
+
+            it("dot-only: totals.dpscd uses totalAvg from dot component divided by cooldown", function()
+                -- dot avg=750 (600*1.25 crit), totalAvg=750, cooldown=10 → dpscd=75.0
+                local result = Calculator.computeMetrics(
+                    { { min = 600, max = 600, type = "dot", duration = 6 } }, stdStats
+                )
+                assert.are.equal(75.0, result.totals.dpscd)
             end)
         end)
 

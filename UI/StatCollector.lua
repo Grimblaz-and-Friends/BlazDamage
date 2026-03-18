@@ -36,10 +36,10 @@ function StatCollector.getSpellStats(spellID)
     local spellInfo = C_Spell.GetSpellInfo(spellID)
     local costs = C_Spell.GetSpellPowerCost(spellID)
     local stats = {
-        castTime     = (spellInfo and spellInfo.castTime or 0) / 1000,
+        castTime     = (spellInfo and spellInfo.castTime or 0) / 1000, -- ms -> s
         resourceCost = (costs and costs[1] and costs[1].cost) or 0,
         resourceType = costs and costs[1] and costs[1].type,
-        cooldown     = (GetSpellBaseCooldown(spellID) or 0) / 1000,
+        cooldown     = (GetSpellBaseCooldown(spellID) or 0) / 1000, -- ms -> s; 2nd return (gcdMs) discarded
         description  = description,
     }
     spellCache[spellID] = stats

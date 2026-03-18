@@ -18,7 +18,7 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 --                   If all components are skipped the function returns nil.
 -- stats:            {critChance, critMult, castTime, gcd, resourceCost?, cooldown?}
 --                   resourceCost nil → dpm omitted (unknown cost)
---                   cooldown nil or 0 → dpscd omitted
+--                   cooldown nil, 0, or negative → dpscd omitted
 --
 -- Returns { components = {...}, totals = { avg, dps, dpsc, dpscd, dpm } }
 --   components entries: { avg, type, dps, dpsc, dpm }  for direct/heal

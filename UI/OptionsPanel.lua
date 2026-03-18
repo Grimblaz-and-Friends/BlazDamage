@@ -120,6 +120,16 @@ function OptionsPanel.init()
         BD.config.tooltipShowDpsc = tooltipShowDpscSetting:GetValue()
     end)
 
+    local tooltipShowDpscdSetting = Settings.RegisterAddOnSetting(
+        category, "BlazDamage_tooltipShowDpscd", "tooltipShowDpscd",
+        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cooldown)", BD.defaults.tooltipShowDpscd
+    )
+    Settings.CreateCheckbox(category, tooltipShowDpscdSetting,
+        "Show damage/healing per second of cooldown in tooltips.")
+    tooltipShowDpscdSetting:SetValueChangedCallback(function()
+        BD.config.tooltipShowDpscd = tooltipShowDpscdSetting:GetValue()
+    end)
+
     local tooltipShowCritSetting = Settings.RegisterAddOnSetting(
         category, "BlazDamage_tooltipShowCrit", "tooltipShowCrit",
         BD.config, Settings.VarType.Boolean, "Tooltip: Crit", BD.defaults.tooltipShowCrit
@@ -138,16 +148,6 @@ function OptionsPanel.init()
         "Show damage/healing per resource in tooltips.")
     tooltipShowDpmSetting:SetValueChangedCallback(function()
         BD.config.tooltipShowDpm = tooltipShowDpmSetting:GetValue()
-    end)
-
-    local tooltipShowDpscdSetting = Settings.RegisterAddOnSetting(
-        category, "BlazDamage_tooltipShowDpscd", "tooltipShowDpscd",
-        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cooldown)", BD.defaults.tooltipShowDpscd
-    )
-    Settings.CreateCheckbox(category, tooltipShowDpscdSetting,
-        "Show damage/healing per second of cooldown in tooltips.")
-    tooltipShowDpscdSetting:SetValueChangedCallback(function()
-        BD.config.tooltipShowDpscd = tooltipShowDpscdSetting:GetValue()
     end)
 
     -- [MISC SECTION]
