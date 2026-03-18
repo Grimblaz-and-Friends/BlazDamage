@@ -97,12 +97,12 @@ avg = (min + max) / 2 × (1 + critChance × (critMult − 1))
 
 `timeOnTarget = max(castTime, gcd)` — the window the player is "occupied" casting or waiting on the GCD.
 
-| Metric  | Formula               | Nil guard                                              |
-| ------- | --------------------- | ------------------------------------------------------ |
-| `dps`   | `avg / timeOnTarget`  | nil when `timeOnTarget == 0`                           |
-| `dpsc`  | `avg / castTime`      | nil when `castTime == 0`                               |
-| `dpscd` | `totalAvg / cooldown` | nil when `cooldown` is nil or 0 (totals only)          |
-| `dpm`   | `avg / resourceCost`  | nil when `resourceCost` is nil or 0                    |
+| Metric  | Formula               | Nil guard                                                  |
+| ------- | --------------------- | ---------------------------------------------------------- |
+| `dps`   | `avg / timeOnTarget`  | nil when `timeOnTarget == 0`                               |
+| `dpsc`  | `avg / castTime`      | nil when `castTime == 0`                                   |
+| `dpscd` | `totalAvg / cooldown` | nil when `cooldown` is nil, 0, or negative (totals only)   |
+| `dpm`   | `avg / resourceCost`  | nil when `resourceCost` is nil or 0                        |
 
 All nil guards are defensive: returning `nil` instead of `0` prevents the UI from displaying misleading zeroes.
 
@@ -127,7 +127,7 @@ Heal components compute the same throughput metrics as `direct`: per-component `
 
 `totals.dps` is nil when no component contributed a non-nil dps value.
 `totals.dpsc` is nil when `stats.castTime` is 0.
-`totals.dpscd` is nil when `stats.cooldown` is nil or 0. `stats.cooldown` is populated by `UI/StatCollector` calling `GetSpellBaseCooldown`, which returns the base (unhasted) cooldown in milliseconds — for haste-affected cooldowns, the reported metric may overstate the effective cooldown. DPSCD is a totals-only metric; it does not appear in per-component results.
+`totals.dpscd` is nil when `stats.cooldown` is nil, 0, or negative. `stats.cooldown` is populated by `UI/StatCollector` calling `GetSpellBaseCooldown`, which returns the base (unhasted) cooldown in milliseconds — for haste-affected cooldowns, the reported metric may overstate the effective cooldown. DPSCD is a totals-only metric; it does not appear in per-component results.
 `totals.dpm` is nil when `stats.resourceCost` is nil or 0.
 
 Per-component `dpsc` and `dpm` are populated for `direct` and `heal` components; they are `nil` for `dot` and `channel` components. All component types (direct, heal, dot, channel) contribute their `avg` to `totalAvg`; this accumulator drives `totals.dpsc` and `totals.dpm`.
