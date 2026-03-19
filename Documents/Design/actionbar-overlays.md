@@ -60,7 +60,7 @@ is printed to chat. Blizzard bar overlays continue to work regardless.
 
 Known limitations:
 
-- Bars added or reconfigured mid-session require `/reload` to pick up new buttons.
+- Bars added or reconfigured mid-session require `/reload` to pick up new buttons (update mode only; auto mode picks up new registrations dynamically via the `RegisterFrame` hook).
 
 ## EventHandler Integration
 
