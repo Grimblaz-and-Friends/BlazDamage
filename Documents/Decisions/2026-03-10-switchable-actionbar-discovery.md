@@ -7,11 +7,13 @@
 ## Context
 
 The original ADR chose `hooksecurefunc("ActionButton_Update", ...)` as the single discovery mechanism.
-During design for Issue #7, we identified that WoW 12.x provides `ActionBarButtonEventsFrame_RegisterFrame` —
+During design for Issue #7, we identified that WoW 12.x provides `ActionBarButtonEventsFrame:RegisterFrame()` —
 a registration hook that fires when buttons formally register with the actionbar event frame.
 This provides more reliable button discovery with lower overhead than the update hook.
 
-However, `ActionBarButtonEventsFrame_RegisterFrame` may not exist in all WoW versions or modded environments, so a fallback strategy is needed.
+> **Amended 2026-03-18 (Issue #43)**: Original Context erroneously named `ActionBarButtonEventsFrame_RegisterFrame` as a global function — confirmed in-game to never have existed. Corrected to method form `ActionBarButtonEventsFrame:RegisterFrame()` per in-game diagnostic.
+
+However, `ActionBarButtonEventsFrame` may not exist in all WoW versions or modded environments, so a fallback strategy is needed.
 
 ## Decision
 
@@ -19,10 +21,10 @@ Implement two switchable discovery modes controlled by `BD.config.discoveryMode`
 
 | Mode | Hook | Notes |
 | --- | --- | --- |
-| `auto` | `ActionBarButtonEventsFrame_RegisterFrame` | Default. Lower overhead, covers dynamically registered buttons. Falls back gracefully via pcall. |
+| `auto` | `ActionBarButtonEventsFrame:RegisterFrame()` | Default. Lower overhead, covers dynamically registered buttons. Falls back gracefully via pcall (prints error message; user manually switches with `/bd discovery update` + `/reload`). |
 | `update` | `ActionButton_Update` | Fallback for environments where the registration hook is unavailable. |
 
-Both modes call `scanDefaultButtons()` at init time to handle buttons already registered before `PLAYER_ENTERING_WORLD`. Discovery is idempotent — `init()` only runs once per session.
+Both modes call `scanAll()` at init time to handle buttons already registered before `PLAYER_ENTERING_WORLD`. Discovery is idempotent — `init()` only runs once per session.
 
 ## Switching
 
@@ -35,5 +37,5 @@ Both modes call `scanDefaultButtons()` at init time to handle buttons already re
 ## Consequences
 
 - Blizzard default actionbars work in both modes.
-- Third-party addon buttons work in `auto` mode if they use `ActionBarButtonEventsFrame_RegisterFrame`; `update` mode covers buttons that trigger `ActionButton_Update`.
+- Third-party addon buttons work in `auto` mode if they use `ActionBarButtonEventsFrame:RegisterFrame()`; `update` mode covers buttons that trigger `ActionButton_Update`.
 - The original ADR's hook is now the fallback rather than the primary strategy.

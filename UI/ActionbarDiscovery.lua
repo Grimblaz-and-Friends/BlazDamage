@@ -24,7 +24,7 @@ local function scanDefaultButtons()
         for i = 1, 12 do
             local button = _G[prefix .. i]
             if button then
-                BD.OverlayRenderer.attachOverlay(button)
+                pcall(BD.OverlayRenderer.attachOverlay, button)
             end
         end
     end
@@ -37,7 +37,7 @@ local function scanElvUIButtons()
         for slot = 1, 12 do
             local button = _G["ElvUI_Bar" .. id .. "Button" .. slot]
             if button then
-                BD.OverlayRenderer.attachOverlay(button)
+                pcall(BD.OverlayRenderer.attachOverlay, button)
                 found = found + 1
             end
         end
@@ -54,8 +54,8 @@ local function scanAll()
 end
 
 local function initAuto()
-    local ok = pcall(hooksecurefunc, "ActionBarButtonEventsFrame_RegisterFrame", function(button)
-        BD.OverlayRenderer.attachOverlay(button)
+    local ok = pcall(hooksecurefunc, ActionBarButtonEventsFrame, "RegisterFrame", function(_, button)
+        pcall(BD.OverlayRenderer.attachOverlay, button)
     end)
     if not ok then
         print(PREFIX .. " Auto discovery failed. Try /bd discovery update and /reload")
@@ -65,7 +65,7 @@ end
 
 local function initUpdate()
     local ok = pcall(hooksecurefunc, "ActionButton_Update", function(button)
-        BD.OverlayRenderer.attachOverlay(button)
+        pcall(BD.OverlayRenderer.attachOverlay, button)
     end)
     if not ok then
         print(PREFIX .. " Update discovery failed. Try /bd discovery auto and /reload")

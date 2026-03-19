@@ -75,5 +75,6 @@ WoW API
 See `Documents/Decisions/` for the full Architecture Decision Records:
 
 - [API-First Approach](../Decisions/2026-03-02-api-first-no-manual-spell-data.md) — why we use `C_Spell.GetSpellDescription()` instead of manual spell tables
-- [Addon-Agnostic Discovery](../Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md) — why we hook `ActionButton_Update` generically
+- [Addon-Agnostic Discovery](../Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md) — why we hook `ActionButton_Update` generically (superseded)
+- [Switchable Discovery Modes](../Decisions/2026-03-10-switchable-actionbar-discovery.md) — primary `auto` mode hooks `ActionBarButtonEventsFrame:RegisterFrame()`; `ActionButton_Update` is the `update`-mode fallback
 - [Class-Agnostic Engine](../Decisions/2026-03-02-class-agnostic-calculation-engine.md) — why the Engine makes no class-specific assumptions

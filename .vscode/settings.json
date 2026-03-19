@@ -26,7 +26,8 @@
     "SlashCmdList",
     "TooltipDataProcessor",
     "Settings",
-    "STANDARD_TEXT_FONT"
+    "STANDARD_TEXT_FONT",
+    "ActionBarButtonEventsFrame"
   ],
   "Lua.runtime.version": "Lua 5.1",
   "Lua.runtime.builtin": {

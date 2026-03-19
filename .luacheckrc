@@ -39,11 +39,11 @@ stds.wow = {
         "UnitStat",
         "UnitLevel",
         -- Action functions
-        "ActionBarButtonEventsFrame_RegisterFrame",
         "GetActionInfo",
         "HasAction",
         "IsUsableAction",
         -- Frame / UI
+        "ActionBarButtonEventsFrame",
         "CreateFrame",
         "NumberFontNormalSmall",
         "UIParent",

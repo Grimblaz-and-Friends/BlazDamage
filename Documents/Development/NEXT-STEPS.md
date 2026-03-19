@@ -13,7 +13,7 @@ See [Issue #6](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/6) for 
 ## Completed: Issue #7 — Actionbar Overlays
 
 - `UI/OverlayRenderer.lua` — attaches FontString overlays to actionbar buttons, refreshes via throttled stat cycle or immediate slot update
-- `UI/ActionbarDiscovery.lua` — discovers buttons via `ActionBarButtonEventsFrame_RegisterFrame` (auto mode) or `ActionButton_Update` (update mode), with `scanDefaultButtons()` at init
+- `UI/ActionbarDiscovery.lua` — discovers buttons via `ActionBarButtonEventsFrame:RegisterFrame()` (auto mode) or `ActionButton_Update` (update mode), with `scanAll()` at init
 - `BD.config.discoveryMode` SavedVariable controls discovery strategy (`"auto"` default)
 
 See [Issue #7](https://github.com/Grimblaz-and-Friends/BlazDamage/issues/7) and the [Actionbar Overlays design doc](../../Documents/Design/actionbar-overlays.md) for full details.
