@@ -20,29 +20,34 @@ local function scanDefaultButtons()
         "MultiBarRightButton",
         "MultiBarLeftButton",
     }
+    local defaultFound = 0
     for _, prefix in ipairs(names) do
         for i = 1, 12 do
             local button = _G[prefix .. i]
             if button then
-                BD.OverlayRenderer.attachOverlay(button)
+                pcall(BD.OverlayRenderer.attachOverlay, button)  -- per-button; degrade gracefully on individual failure
+                defaultFound = defaultFound + 1
             end
         end
+    end
+    if defaultFound == 0 then
+        print(PREFIX .. " No default actionbar buttons found. UI may not have loaded yet.")
     end
 end
 
 local function scanElvUIButtons()
     if not ElvUI then return end
-    local found = 0
+    local buttonCount = 0
     for _, id in ipairs(ELVUI_BAR_IDS) do
         for slot = 1, 12 do
             local button = _G["ElvUI_Bar" .. id .. "Button" .. slot]
             if button then
-                BD.OverlayRenderer.attachOverlay(button)
-                found = found + 1
+                pcall(BD.OverlayRenderer.attachOverlay, button)  -- per-button; degrade gracefully on individual failure
+                buttonCount = buttonCount + 1
             end
         end
     end
-    if found == 0 then
+    if buttonCount == 0 then
         print(PREFIX .. " ElvUI detected but no buttons found. Ensure the ElvUI ActionBar module is enabled in /ec.")
     end
 end
@@ -54,8 +59,8 @@ local function scanAll()
 end
 
 local function initAuto()
-    local ok = pcall(hooksecurefunc, "ActionBarButtonEventsFrame_RegisterFrame", function(button)
-        BD.OverlayRenderer.attachOverlay(button)
+    local ok = pcall(hooksecurefunc, ActionBarButtonEventsFrame, "RegisterFrame", function(_, button)
+        pcall(BD.OverlayRenderer.attachOverlay, button)
     end)
     if not ok then
         print(PREFIX .. " Auto discovery failed. Try /bd discovery update and /reload")
@@ -65,7 +70,7 @@ end
 
 local function initUpdate()
     local ok = pcall(hooksecurefunc, "ActionButton_Update", function(button)
-        BD.OverlayRenderer.attachOverlay(button)
+        pcall(BD.OverlayRenderer.attachOverlay, button)
     end)
     if not ok then
         print(PREFIX .. " Update discovery failed. Try /bd discovery auto and /reload")

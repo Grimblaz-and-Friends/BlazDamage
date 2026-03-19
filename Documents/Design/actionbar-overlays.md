@@ -39,7 +39,11 @@ Re-applies font (size, face) and position anchor to all tracked overlays from cu
 ## ActionbarDiscovery API
 
 **`BD.ActionbarDiscovery.init()`**
-Idempotent. Runs once per session on `PLAYER_ENTERING_WORLD`. Reads `BD.config.discoveryMode` and dispatches to `initAuto()` or `initUpdate()`. Both modes call `scanDefaultButtons()` (and `scanElvUIButtons()` when ElvUI is present) at init time.
+Idempotent. Runs once per session on `PLAYER_ENTERING_WORLD`. Reads `BD.config.discoveryMode` and dispatches to `initAuto()` (hooks `ActionBarButtonEventsFrame:RegisterFrame()`) or `initUpdate()` (hooks `ActionButton_Update`).
+Both modes call `scanDefaultButtons()` (and `scanElvUIButtons()` when ElvUI is present) at init time.
+
+Both `initAuto()` and `initUpdate()` wrap their `hooksecurefunc` call in `pcall`. If the hook fails, a warning is printed and the user is prompted to switch modes manually.
+All `attachOverlay` calls at scan sites degrade gracefully per-button via `pcall` — a single-button failure does not abort the scan.
 
 **Discovery Modes**
 See [2026-03-10-switchable-actionbar-discovery.md](../Decisions/2026-03-10-switchable-actionbar-discovery.md).
@@ -52,9 +56,11 @@ Blizzard bar scan in both discovery modes. It checks `_G["ElvUI_Bar{N}Button{M}"
 If ElvUI is detected but no buttons are found (e.g., the ElvUI actionbar module is disabled), a warning
 is printed to chat. Blizzard bar overlays continue to work regardless.
 
+`scanDefaultButtons()` similarly warns if no default bar buttons are found in `_G` at scan time.
+
 Known limitations:
 
-- Bars added or reconfigured mid-session require `/reload` to pick up new buttons.
+- Bars added or reconfigured mid-session require `/reload` to pick up new buttons (update mode only; auto mode picks up new registrations dynamically via the `RegisterFrame` hook).
 
 ## EventHandler Integration
 

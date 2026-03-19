@@ -8,9 +8,9 @@
 ## Context
 
 In-game investigation during Issue #10 confirmed that the generic discovery hooks —
-`ActionBarButtonEventsFrame_RegisterFrame` and `ActionButton_Update` — find zero ElvUI buttons.
+`ActionBarButtonEventsFrame:RegisterFrame()` and `ActionButton_Update` — find zero ElvUI buttons.
 ElvUI replaces Blizzard's entire frame system, including its actionbar infrastructure, with its own
-implementation. ElvUI actionbar buttons do not participate in `ActionBarButtonEventsFrame_RegisterFrame`
+implementation. ElvUI actionbar buttons do not participate in `ActionBarButtonEventsFrame:RegisterFrame()`
 registration and do not trigger `ActionButton_Update`, making both discovery modes ineffective for
 ElvUI users without additional handling.
 
