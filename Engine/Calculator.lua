@@ -16,10 +16,11 @@ if type(BD) ~= "table" then BD = {} end -- luacheck: ignore 331
 -- parsedComponents: array of {min, max, type, duration?}  (nil/empty → returns nil)
 --                   Components where min or max is not a number are silently skipped.
 --                   If all components are skipped the function returns nil.
--- stats:            {critChance, critMult, castTime, gcd, resourceCost?}
+-- stats:            {critChance, critMult, castTime, gcd, resourceCost?, cooldown?}
 --                   resourceCost nil → dpm omitted (unknown cost)
+--                   cooldown nil, 0, or negative → dpscd omitted
 --
--- Returns { components = {...}, totals = { avg, dps, dpsc, dpm } }
+-- Returns { components = {...}, totals = { avg, dps, dpsc, dpscd, dpm } }
 --   components entries: { avg, type, dps, dpsc, dpm }  for direct/heal
 --                       { avg, type, dotDps }           for dot/channel
 function Calculator.computeMetrics(parsedComponents, stats)
@@ -67,17 +68,19 @@ function Calculator.computeMetrics(parsedComponents, stats)
         return nil
     end
 
-    local totalDpsc = (stats.castTime > 0) and (totalAvg / stats.castTime) or nil
-    local totalDpm  = (stats.resourceCost ~= nil and stats.resourceCost > 0)
-                      and (totalAvg / stats.resourceCost) or nil
+    local totalDpsc  = (stats.castTime > 0) and (totalAvg / stats.castTime) or nil
+    local totalDpscd = (stats.cooldown ~= nil and stats.cooldown > 0) and (totalAvg / stats.cooldown) or nil
+    local totalDpm   = (stats.resourceCost ~= nil and stats.resourceCost > 0)
+                       and (totalAvg / stats.resourceCost) or nil
 
     return {
         components = outputComponents,
         totals = {
-            avg  = totalAvg,
-            dps  = totalDps,
-            dpsc = totalDpsc,
-            dpm  = totalDpm,
+            avg   = totalAvg,
+            dps   = totalDps,
+            dpsc  = totalDpsc,
+            dpscd = totalDpscd,
+            dpm   = totalDpm,
         },
     }
 end

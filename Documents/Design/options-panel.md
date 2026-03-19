@@ -1,6 +1,6 @@
 # Options Panel Design
 
-BlazDamage exposes all 12 user-configurable settings through a native Blizzard Settings panel registered via the Settings API (Dragonflight+/Midnight).
+BlazDamage exposes all 13 user-configurable settings through a native Blizzard Settings panel registered via the Settings API (Dragonflight+/Midnight).
 
 ## Access
 
@@ -31,7 +31,7 @@ Settings with immediate visual side effects (metric, overlays) also register exp
 
 | Setting | Widget | Range / Options |
 | --- | --- | --- |
-| `metric` | Dropdown | avg, dps, dpsc, dpm |
+| `metric` | Dropdown | avg, dps, dpsc, dpscd, dpm |
 | `showOverlays` | Checkbox | — |
 | `overlayFontSize` | Slider | 8–20, step 1 |
 | `overlayPosition` | Dropdown | TOPLEFT, TOPRIGHT, BOTTOMLEFT, BOTTOMRIGHT |
@@ -39,6 +39,7 @@ Settings with immediate visual side effects (metric, overlays) also register exp
 | `tooltipShowAvg` | Checkbox | — |
 | `tooltipShowDps` | Checkbox | — |
 | `tooltipShowDpsc` | Checkbox | — |
+| `tooltipShowDpscd` | Checkbox | — |
 | `tooltipShowCrit` | Checkbox | — |
 | `tooltipShowDpm` | Checkbox | — |
 | `discoveryMode` | Dropdown | auto, update |

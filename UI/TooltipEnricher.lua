@@ -28,6 +28,7 @@ local function enrichCallback(tooltip, tooltipData)
         gcd          = playerStats.gcd,
         castTime     = spellStats.castTime,
         resourceCost = spellStats.resourceCost,
+        cooldown     = spellStats.cooldown,
     }
     local result = BD.Calculator.computeMetrics(parsed, stats)
     if not result then return end
@@ -47,6 +48,11 @@ local function enrichCallback(tooltip, tooltipData)
     if BD.config.tooltipShowDpsc ~= false and totals.dpsc and totals.dps then
         local dpscLabel = healOnly and "HPSC" or "DPSC"
         lines[#lines + 1] = "  " .. dpscLabel .. ": " .. BD.Calculator.formatNumber(totals.dpsc)
+    end
+    -- Unlike dpsc, no totals.dps cross-check: dpscd is nil whenever cooldown is absent, 0, or negative.
+    if BD.config.tooltipShowDpscd ~= false and totals.dpscd then
+        local dpscdLabel = healOnly and "HPSCD" or "DPSCD"
+        lines[#lines + 1] = "  " .. dpscdLabel .. ": " .. BD.Calculator.formatNumber(totals.dpscd)
     end
     if BD.config.tooltipShowCrit ~= false then
         lines[#lines + 1] = "  Crit: " .. string.format("%.1f%%", playerStats.critChance * 100)

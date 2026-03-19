@@ -20,6 +20,7 @@ function OptionsPanel.init()
         container:Add("avg", "Average")
         container:Add("dps", "DPS")
         container:Add("dpsc", "DPS (Cast)")
+        container:Add("dpscd", "DPS (Cooldown)")
         container:Add("dpm", "DPM")
         return container:GetData()
     end
@@ -117,6 +118,16 @@ function OptionsPanel.init()
         "Show damage/healing per cast second in tooltips.")
     tooltipShowDpscSetting:SetValueChangedCallback(function()
         BD.config.tooltipShowDpsc = tooltipShowDpscSetting:GetValue()
+    end)
+
+    local tooltipShowDpscdSetting = Settings.RegisterAddOnSetting(
+        category, "BlazDamage_tooltipShowDpscd", "tooltipShowDpscd",
+        BD.config, Settings.VarType.Boolean, "Tooltip: DPS (Cooldown)", BD.defaults.tooltipShowDpscd
+    )
+    Settings.CreateCheckbox(category, tooltipShowDpscdSetting,
+        "Show damage/healing per second of cooldown in tooltips.")
+    tooltipShowDpscdSetting:SetValueChangedCallback(function()
+        BD.config.tooltipShowDpscd = tooltipShowDpscdSetting:GetValue()
     end)
 
     local tooltipShowCritSetting = Settings.RegisterAddOnSetting(

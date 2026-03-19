@@ -31,6 +31,8 @@ The pipeline reuses the same flow established in `UI/OverlayRenderer.lua`:
   Avg: 14.3k                   ← when tooltipShowAvg ~= false
   DPS: 8.2k                    ← when tooltipShowDps ~= false and totals.dps non-nil
   DPSC: 9.1k                   ← when tooltipShowDpsc ~= false and totals.dpsc and totals.dps non-nil
+  DPSCD: 1.2k                  ← when tooltipShowDpscd ~= false and totals.dpscd non-nil
+  HPSCD: 1.2k                  ← heal-only variant of DPSCD
   HPS: 12.1k                   ← when tooltipShowDps ~= false and heal-only spell
   HPSC: 13.4k                  ← when tooltipShowDpsc ~= false, heal-only, and cast time > 0
   Crit: 18.5%                  ← when tooltipShowCrit ~= false
@@ -57,6 +59,7 @@ The resource efficiency line label adapts to the spell's resource type:
 | --- | --- |
 | All `tooltipShow*` toggles disabled | Header and all lines suppressed; `tooltip:Show()` not called — original tooltip unchanged |
 | Instant-cast spell (castTime = 0) | `DPSC` line omitted (nil guard); `DPS` uses GCD floor |
+| Spell with no cooldown (cooldown = 0 or absent) | `DPSCD`/`HPSCD` line omitted (totals.dpscd nil guard) |
 | Costless spell (resourceType = nil, resourceCost = 0) | Resource efficiency line omitted (label = nil, dpm = nil) |
 | Heal-only spell | `HPS` and `HPSC` shown (labels swapped from DPS/DPSC); `HPM/HPR/HPRP/HPE/HPF` shown when spell has resource cost. `HPSC` suppressed when castTime = 0. |
 | Unparseable description | All enrichment skipped silently; default tooltip only |

@@ -29,6 +29,7 @@ stds.wow = {
         "GetSpellBonusHealing",
         "GetSpellCritChance",
         "GetHaste",
+        "GetSpellBaseCooldown",
         "GetMeleeHaste",
         "GetMasteryEffect",
         "GetVersatilityBonus",

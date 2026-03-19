@@ -57,6 +57,7 @@ local function updateButton(button, entry)
         gcd          = playerStats.gcd,
         castTime     = spellStats.castTime,
         resourceCost = spellStats.resourceCost,
+        cooldown     = spellStats.cooldown,
     }
     local result = BD.Calculator.computeMetrics(parsed, stats)
     local metric = BD.config and BD.config.metric or BD.defaults.metric
