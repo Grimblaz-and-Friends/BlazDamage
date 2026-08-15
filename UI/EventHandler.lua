@@ -44,6 +44,10 @@ frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         BD.ActionbarDiscovery.init()
+        -- Seed combat state. PLAYER_REGEN_* are transition events, so a /reload taken mid-fight
+        -- would otherwise leave the flag reading "out of combat" for the rest of that fight, and
+        -- a missed PLAYER_REGEN_ENABLED would leave it stuck the other way with no path back.
+        BD.StatCollector.setCombat(InCombatLockdown())
         setDirty()
     elseif event == "ACTIONBAR_SLOT_CHANGED" then
         local slot = ...

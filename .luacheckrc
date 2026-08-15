@@ -47,6 +47,7 @@ stds.wow = {
         "GetActionInfo",
         "HasAction",
         "IsUsableAction",
+        "InCombatLockdown",
         -- Frame / UI
         "ActionBarButtonEventsFrame",
         "CreateFrame",

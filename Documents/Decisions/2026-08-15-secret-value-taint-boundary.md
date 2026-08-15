@@ -70,10 +70,28 @@ skipped, not errored on.
 
 ### 3. Both Caches Freeze in Combat, Gated Inside `StatCollector`
 
-**Choice**: `StatCollector.refresh()` is a no-op while in combat, freezing the player-stat cache
-**and** the spell cache together. Combat state is fed in by `EventHandler` from
-`PLAYER_REGEN_DISABLED` / `PLAYER_REGEN_ENABLED`; leaving combat also schedules a recompute through
-the existing throttle. Out of combat, `UNIT_AURA` dirties both caches exactly as before.
+**Choice**: the freeze has two halves. `StatCollector.refresh()` is a no-op while in combat, so
+neither cache is invalidated; **and** `getPlayerStats()` / `getSpellStats()` refuse to populate a
+cold entry while in combat, returning nil instead. Combat state is seeded from
+`InCombatLockdown()` on `PLAYER_ENTERING_WORLD` and thereafter driven by `PLAYER_REGEN_DISABLED` /
+`PLAYER_REGEN_ENABLED`; leaving combat also schedules a recompute through the existing throttle.
+Out of combat, `UNIT_AURA` dirties both caches exactly as before.
+
+**Rationale, on why gating invalidation alone is not enough**: this is the correction an adversarial
+review made to the first implementation, and it is the whole point of the decision. Stopping
+`refresh()` freezes the entries that already exist; it does nothing about a **cache miss**. A spell
+first seen mid-fight — hovered in the spellbook, swapped onto a bar, discovered by the actionbar
+hook — would take a live description read, and that description carries *current* interpolated
+stats while `getPlayerStats()` is frozen at its last out-of-combat values. The result is exactly the
+mixed number this decision exists to prevent, cached and pinned for the rest of the fight. "Freeze
+the caches" and "stop invalidating the caches" are not the same statement, and only the first one is
+correct.
+
+**Rationale, on seeding combat state**: `PLAYER_REGEN_*` are *transition* events. Without a seed, a
+`/reload` taken mid-fight leaves the flag reading "out of combat" for the remainder of that fight,
+and a `PLAYER_REGEN_ENABLED` missed across a loading screen latches it the other way with no path
+back. `InCombatLockdown()` on `PLAYER_ENTERING_WORLD` reconciles both directions at every state
+discontinuity.
 
 **Rationale, on placement**: `Core.lua`'s slash commands, `UI/OptionsPanel.lua` and
 `ACTIONBAR_SLOT_CHANGED` all reach the renderer without passing through `EventHandler`'s throttle,
@@ -88,8 +106,9 @@ snapshot.
 **Impact**: In combat, every overlay and tooltip number holds its last out-of-combat value. Not
 just `avg` — `Engine/Calculator.lua:40` applies `stats.critChance` to every component and every
 total derives from that, while `:32` makes `dps` depend on haste through the GCD, so **no** metric
-in the current design is computable under restrictions. When a session *begins* in combat with
-nothing cached, overlays hide and tooltips skip until the first out-of-combat compute.
+in the current design is computable under restrictions. Anything *not* already cached shows nothing
+rather than a number: a session that begins in combat, and equally any spell first encountered
+mid-fight, hides until the first out-of-combat compute.
 
 ### 4. `GetSpellBaseCooldown` Is Not Modernized
 
@@ -113,10 +132,16 @@ The tempting modernization would import a restriction the current call does not 
   about current character state, and after a proc in combat it reads as confidently and
   specifically wrong.
 - **The guard covers value-secrecy, and only that.** `issecretvalue()` answers one question. A
-  restriction that returns a degraded-but-plain value (a `0` where a real number belongs) passes it
-  silently and surfaces as a missing metric; a restriction that returns nothing surfaces as a
-  hidden overlay. Those are acceptable degradations, not coverage. If numbers go missing inside an
-  instance, do not conclude the guard worked.
+  restriction that returns nothing surfaces as a hidden overlay. A restriction that returns a
+  degraded-but-plain value — a `0` where a real number belongs — passes the guard silently, and
+  what happens next depends on the field: a `0` `resourceCost` or `cooldown` drops `dpm` and
+  `dpscd` (`Engine/Calculator.lua:48`, `:72`, `:73`), which is the benign case, but a `0`
+  `castTime` **is not** merely a dropped metric. It drops `dpsc`, and it also reaches
+  `Calculator.lua:32`, where `timeOnTarget = math.max(castTime, gcd)` collapses to `gcd`, so `:45`
+  still computes and displays a `dps` — inflated by roughly a third at a 1.5s GCD and more at the
+  0.75s floor. `avg` displays unaffected. So the `0` fallbacks are safe for two of the three fields
+  and produce a silently wrong number for the third. If numbers go missing inside an instance, do
+  not conclude the guard worked; if they look plausible but high, suspect this.
 - **Only the open-world restriction tier has been observed.** Delves and Mythic+ may restrict a
   wider API set; per `d-accept-instanced-tier-risk-46` this was knowingly left to be discovered in
   the field. If `C_Spell.GetSpellDescription` itself ever returns a secret, that voids this addon's
