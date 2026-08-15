@@ -4,7 +4,7 @@
 
 **Test the Engine exhaustively. Verify the UI manually.**
 
-The Engine layer (`Engine/`) is pure Lua — no WoW API, no frames, no state. It takes numbers in and returns numbers out. This makes it fully testable with busted (Lua 5.4.6 CI runtime; WoW target is Lua 5.1 — Engine code must remain 5.1-compatible), without WoW running.
+The Engine layer (`Engine/`) is pure Lua — no WoW API, no frames, no state. It takes numbers in and returns numbers out. This makes it fully testable with busted (CI runtime: Lua 5.1, matching the WoW target — Engine code must remain 5.1-compatible), without WoW running.
 
 The UI layer (`UI/`) is deeply integrated with WoW's runtime (frames, events, hooks). Mocking the WoW API for automated tests is costly and brittle. Manual in-game verification is more reliable and faster for this layer in v1.
 
