@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(luacheck:*)",
+      "Bash(busted:*)",
+      "Bash(pwsh .github/scripts/validate-architecture.ps1)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "agent-orchestra@agent-orchestra": true
+  },
+  "extraKnownMarketplaces": {
+    "agent-orchestra": {
+      "source": {
+        "source": "github",
+        "repo": "Grimblaz/agent-orchestra"
+      }
+    }
+  }
+}

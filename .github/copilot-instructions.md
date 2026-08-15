@@ -47,12 +47,17 @@ See `.github/architecture-rules.md` for full layer rules, dependency constraints
 
 ```text
 BlazDamage/
+├── .claude/
+│   └── settings.json             # Claude Code project permissions and plugins
+├── .githooks/
+│   └── pre-commit                # Strips trailing whitespace from staged files
 ├── .github/
 │   ├── copilot-instructions.md   # This file — agent project context
 │   ├── architecture-rules.md     # Layer boundary rules and examples
-│   ├── instructions/             # Workflow instruction files
+│   ├── skills/                   # Repo-local agent skills
 │   ├── scripts/                  # Validation scripts
 │   └── workflows/                # GitHub Actions CI
+├── .vscode/                      # Committed editor config and extensions
 ├── Config/
 │   └── Defaults.lua              # SavedVariables defaults
 ├── Data/                         # Static lookup tables (if needed)
@@ -63,8 +68,10 @@ BlazDamage/
 ├── Documents/
 │   ├── Design/                   # Design documents (committed with PRs)
 │   ├── Decisions/                # Architecture Decision Records
-│   └── Development/              # Vision, roadmap, quick-start, etc.
+│   ├── Development/              # Vision, roadmap, quick-start, etc.
+│   └── index.md                  # Documentation hub
 ├── BlazDamage.toc                # WoW addon metadata
+├── CLAUDE.md                     # Claude Code entry point — imports this file
 ├── Core.lua                      # Addon entry point, namespace init
 ├── .luacheckrc                   # Luacheck configuration
 ├── .editorconfig                 # Formatting defaults
@@ -81,7 +88,11 @@ BlazDamage/
 - **Constants**: UPPER_SNAKE_CASE (`MAX_OVERLAY_UPDATE_RATE`, `DEFAULT_METRIC`)
 - **Locals**: Always use `local` — never pollute the global namespace
 - **Addon namespace**: Access via `local addonName, BD = ...` in each file listed in the TOC
-- **Formatter**: `editor.formatOnSave` is disabled for Lua files (no auto-formatter configured). Style is governed by these conventions and `.editorconfig`. Do not add column-aligned whitespace that a formatter would override — if the formatter is ever enabled for Lua, configure it in `.vscode/settings.json`, stage your files (`git add`), and verify the formatter left the working tree clean (`git diff --exit-code` exits 0) before committing.
+- **Formatter**: `editor.formatOnSave` is disabled for Lua files (no auto-formatter configured).
+  Style is governed by these conventions and `.editorconfig`. Do not add column-aligned whitespace
+  that a formatter would override — if the formatter is ever enabled for Lua, configure it in
+  `.vscode/settings.json`, stage your files (`git add`), and verify the formatter left the working
+  tree clean (`git diff --exit-code` exits 0) before committing.
 
 ### Banned Suffixes
 
@@ -150,3 +161,4 @@ critic_passes: 3
 
 - Architecture Rules: `.github/architecture-rules.md`
 - Documentation Hub: `Documents/index.md`
+- Claude Code entry point: `CLAUDE.md` — imports this file and adds Claude-specific operating notes

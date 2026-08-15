@@ -25,3 +25,14 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Claude Code — commit .claude/settings.json, ignore worktrees and personal overrides
+/.claude/worktrees/
+/.claude/settings.local.json
+
+# Agent scratch — keep out of git status
+.tmp/
+/[A-Za-z][A-Za-z]sers*
+/[A-Za-z]:*
+/var*folders*
+/[Rr][Uu][Nn][Nn][Ee][Rr]*[Tt][Ee][Mm][Pp]*
