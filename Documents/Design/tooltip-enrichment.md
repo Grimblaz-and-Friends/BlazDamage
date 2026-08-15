@@ -19,7 +19,8 @@ The pipeline reuses the same flow established in `UI/OverlayRenderer.lua`:
 3. Extract `spellID` from `tooltipData.id` — return if nil
 4. `BD.StatCollector.getSpellStats(spellID)` — return if nil or no description
 5. `BD.DescriptionParser.parse(description)` — return if nil or empty
-6. Merge `playerStats` + `spellStats` into `stats` table for Calculator
+6. Merge `playerStats` + `spellStats` into `stats` table for Calculator — enrichment is skipped
+   entirely when `getPlayerStats()` returns `nil` (combat restrictions, nothing cached)
 7. `BD.Calculator.computeMetrics(parsed, stats)` — return if nil
 8. Collect metric lines conditionally (per-toggle guards using `~= false`); header and `tooltip:Show()` only emitted when at least one line is collected
 9. `tooltip:Show()` to resize the tooltip frame — only called when at least one metric line was added

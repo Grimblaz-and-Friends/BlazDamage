@@ -22,6 +22,9 @@ local function enrichCallback(tooltip, tooltipData)
     if not parsed or #parsed == 0 then return end
 
     local playerStats = BD.StatCollector.getPlayerStats()
+    -- Unreadable stats with nothing cached from out of combat: skip enrichment entirely rather
+    -- than index a nil table (this path is not masked by the overlay path — it runs on hover).
+    if not playerStats then return end
     local stats = {
         critChance   = playerStats.critChance,
         critMult     = playerStats.critMult,

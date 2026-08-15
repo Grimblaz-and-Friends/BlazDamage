@@ -1,4 +1,4 @@
-## Interface: 120001
+## Interface: 120100
 ## Title: BlazDamage
 ## Notes: Modern successor to DrDamage — displays damage/healing metrics on actionbar buttons
 ## Version: 0.1.0

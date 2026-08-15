@@ -16,6 +16,7 @@
 - [Addon-Agnostic Actionbar Discovery](Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md) *(superseded)*
 - [Switchable Actionbar Discovery Strategy](Decisions/2026-03-10-switchable-actionbar-discovery.md)
 - [Class-Agnostic Calculation Engine](Decisions/2026-03-02-class-agnostic-calculation-engine.md)
+- [Secret-Value Taint Boundary and the In-Combat Freeze](Decisions/2026-08-15-secret-value-taint-boundary.md)
 
 ## Design Documents
 

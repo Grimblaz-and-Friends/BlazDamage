@@ -69,6 +69,8 @@ WoW API
 | `PLAYER_EQUIPMENT_CHANGED` | UI/EventHandler.lua | Full refresh (gear swap changes stats) |
 | `UNIT_AURA` (unit=player) | UI/EventHandler.lua | Full refresh (buff/debuff changes haste/mastery) |
 | `ACTIONBAR_SLOT_CHANGED` | UI/EventHandler.lua | Refresh single slot (spell assigned/cleared) |
+| `PLAYER_REGEN_DISABLED` | UI/EventHandler.lua | Entering combat — freeze both stat caches (see below) |
+| `PLAYER_REGEN_ENABLED` | UI/EventHandler.lua | Leaving combat — unfreeze, then full refresh |
 
 ## Key Decisions
 
@@ -78,3 +80,4 @@ See `Documents/Decisions/` for the full Architecture Decision Records:
 - [Addon-Agnostic Discovery](../Decisions/2026-03-02-addon-agnostic-actionbar-discovery.md) — why we hook `ActionButton_Update` generically (superseded)
 - [Switchable Discovery Modes](../Decisions/2026-03-10-switchable-actionbar-discovery.md) — primary `auto` mode hooks `ActionBarButtonEventsFrame:RegisterFrame()`; `ActionButton_Update` is the `update`-mode fallback
 - [Class-Agnostic Engine](../Decisions/2026-03-02-class-agnostic-calculation-engine.md) — why the Engine makes no class-specific assumptions
+- [Secret-Value Taint Boundary](../Decisions/2026-08-15-secret-value-taint-boundary.md) — why player stats are guarded at read time in `UI/StatCollector.lua`, and why all numbers freeze in combat
