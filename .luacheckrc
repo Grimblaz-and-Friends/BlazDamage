@@ -20,6 +20,11 @@ stds.wow = {
         "C_TooltipInfo",
         "C_ClassTalents",
         "C_Traits",
+        "C_ActionBar",
+        -- Secret values (12.0.5+): issecretvalue is the read-time guard in UI/StatCollector.lua;
+        -- C_Secrets is the restriction-state namespace, allowlisted per the affirmed scope of #46
+        "issecretvalue",
+        "C_Secrets",
         "TooltipDataProcessor",
         "Enum",
         -- SavedVariables

@@ -27,7 +27,7 @@ local function updateButton(button, entry)
         if slot then slotToButton[slot] = button end
     end
 
-    if not slot or not HasAction(slot) then
+    if not slot or not C_ActionBar.HasAction(slot) then
         overlay:Hide()
         return
     end
@@ -51,6 +51,12 @@ local function updateButton(button, entry)
     end
 
     local playerStats = BD.StatCollector.getPlayerStats()
+    if not playerStats then
+        -- Stats unreadable (secret under combat restrictions) and nothing cached from out of
+        -- combat: hide rather than show a number we cannot stand behind.
+        overlay:Hide()
+        return
+    end
     local stats = {
         critChance   = playerStats.critChance,
         critMult     = playerStats.critMult,

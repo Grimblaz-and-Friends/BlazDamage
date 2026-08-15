@@ -38,6 +38,8 @@ frame:RegisterEvent("COMBAT_RATING_UPDATE")
 frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 frame:RegisterEvent("PLAYER_TALENT_UPDATE")
 frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
 frame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
@@ -50,6 +52,14 @@ frame:SetScript("OnEvent", function(self, event, ...)
         else
             BD.OverlayRenderer.refreshSlot(slot)
         end
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        -- Entering combat: freeze both caches at their last out-of-combat values. No refresh is
+        -- scheduled — the frozen numbers stay on screen exactly as they are.
+        BD.StatCollector.setCombat(true)
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        -- Leaving combat: unfreeze first, then recompute through the normal throttled path.
+        BD.StatCollector.setCombat(false)
+        setDirty()
     else
         setDirty()
     end

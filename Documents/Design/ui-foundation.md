@@ -12,9 +12,11 @@ The UI Foundation layer connects the WoW runtime to the pure-Lua Engine. It cons
 
 ## StatCollector API
 
-### `StatCollector.getPlayerStats()` → `{critChance, critMult, haste, gcd}`
+### `StatCollector.getPlayerStats()` → `{critChance, critMult, haste, gcd}` or `nil`
 
 Returns a cached table of player-global stats. Results are cached for the current cycle and cleared by `refresh()`.
+
+Returns `nil` when any stat is unreadable — which since patch 12.0.5 means "restrictions are live and nothing is cached from out of combat". The contract is all-or-nothing: never a partial table, because `Calculator` guards the `stats` table but not its fields and throws on a nil `gcd`. A failed read is not cached, so the next refresh retries. **Callers must nil-check.** See [Secret-Value Taint Boundary](../Decisions/2026-08-15-secret-value-taint-boundary.md).
 
 | Field        | Source                                                           |
 | ------------ | ---------------------------------------------------------------- |
@@ -35,11 +37,17 @@ Returns a cached table of per-spell stats, or `nil` for invalid spellIDs. Result
 
 ### `StatCollector.refresh()`
 
-Clears the per-cycle spell cache and the player stats cache. Called by `EventHandler` after the throttle window elapses.
+Clears the per-cycle spell cache and the player stats cache. Called by `EventHandler` after the throttle window elapses. **No-op in combat** — see Caching Strategy below.
+
+### `StatCollector.setCombat(state)`
+
+Records combat state, driven by `PLAYER_REGEN_DISABLED` / `PLAYER_REGEN_ENABLED` in `EventHandler`. The gate lives here rather than at the event layer because the slash commands, the options panel and `ACTIONBAR_SLOT_CHANGED` all reach the renderer without passing through `EventHandler`'s throttle.
 
 ### Caching Strategy
 
 Player stats are cached once per cycle (global across all spells). Spell stats are cached per-cycle by spellID. Both caches are invalidated together on each `refresh()` call.
+
+In combat both caches freeze together: `refresh()` returns without clearing either, so every overlay and tooltip number holds its last out-of-combat value until combat ends. Freezing the spell cache too is not incidental — spell descriptions keep interpolating live player stats while restricted, so freezing player stats alone would render a live description base multiplied by frozen crit and haste.
 
 ## Integration Contract
 
@@ -51,6 +59,7 @@ local spellStats   = BD.StatCollector.getSpellStats(spellID)
 if not spellStats then return end  -- invalid or empty spellID
 
 local playerStats  = BD.StatCollector.getPlayerStats()
+if not playerStats then return end  -- stats unreadable (combat restrictions), nothing cached
 
 -- Assemble Calculator-compatible stats table
 local stats = {
@@ -72,7 +81,7 @@ local result     = BD.Calculator.computeMetrics(components, stats)
 
 ### Registered Events
 
-Eight events are registered at module load time:
+Ten events are registered at module load time:
 
 | Event                        | Trigger                                                    |
 | ---------------------------- | ---------------------------------------------------------- |
@@ -84,6 +93,8 @@ Eight events are registered at module load time:
 | `PLAYER_TARGET_CHANGED`      | Target change (for future overlay use)                     |
 | `PLAYER_TALENT_UPDATE`       | Talent point assignment change                             |
 | `ACTIVE_TALENT_GROUP_CHANGED` | Active specialization switched                            |
+| `PLAYER_REGEN_DISABLED`      | Entering combat — freezes both caches, no refresh          |
+| `PLAYER_REGEN_ENABLED`       | Leaving combat — unfreezes, then refreshes                 |
 
 `UNIT_AURA` is pre-filtered at the API level via `frame:RegisterUnitEvent("UNIT_AURA", "player")`. The `OnEvent` callback receives no `unit` parameter and performs no in-handler unit guard.
 
@@ -114,7 +125,12 @@ for every spellID.
 
 **Dirty flag + self-unregistering OnUpdate**: The frame's `OnUpdate` is only active between an event and the completion of the next refresh cycle. When the player is idle, there is zero per-frame work from this system.
 
+**Combat gate inside `StatCollector`, not `EventHandler`**: `UNIT_AURA` still dirties the caches in combat, and the refresh it schedules still runs — it simply no-ops. Placing the gate at the cache rather than at the event catches the callers that bypass the throttle entirely (slash commands, options panel, `ACTIONBAR_SLOT_CHANGED`).
+
 ## Known Limitations
+
+**All metrics freeze in combat**: player stats are secret values under combat restrictions since patch 12.0.5, and every metric in the current design depends on crit chance or haste. Numbers hold their last out-of-combat value; a session that *begins* in combat with nothing cached shows no overlays and no tooltip enrichment until combat ends. Frozen numbers carry no staleness cue. Restoring correct in-combat numbers is tracked in issue #48; the reasoning is recorded in [Secret-Value Taint Boundary](../Decisions/2026-08-15-secret-value-taint-boundary.md).
+
 
 **`critMult` hardcoded to 2.0**: The WoW API does not reliably expose per-spell crit multipliers. All spells use 200% crit damage. Detection and configuration improvement is tracked in issue #22.
 

@@ -9,11 +9,12 @@ BlazDamage renders abbreviated damage/healing metrics directly on actionbar butt
 For each tracked actionbar button, each refresh cycle:
 
 1. `button.action` → slot number
-2. `HasAction(slot)` → skip if no action
+2. `C_ActionBar.HasAction(slot)` → skip if no action
 3. `GetActionInfo(slot)` → skip if not `"spell"`
 4. `BD.StatCollector.getSpellStats(spellID)` → `spellStats` (`description`, `castTime`, `resourceCost`)
 5. `BD.DescriptionParser.parse(spellStats.description)` → damage components
-6. `BD.StatCollector.getPlayerStats()` → `playerStats` (`critChance`, `critMult`, `gcd`)
+6. `BD.StatCollector.getPlayerStats()` → `playerStats` (`critChance`, `critMult`, `gcd`) — `nil` when
+   stats are unreadable under combat restrictions with nothing cached; the overlay hides
 7. Merge `spellStats.{castTime, resourceCost}` + `playerStats.{critChance, critMult, gcd}` → unified `stats` table
 8. `BD.Calculator.computeMetrics(components, stats)` → `{totals={avg, dps}}`
 9. `BD.Calculator.resolveMetric(result, metric)` → numeric value
