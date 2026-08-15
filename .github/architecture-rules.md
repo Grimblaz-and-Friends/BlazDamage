@@ -217,7 +217,7 @@ When adding a new file, run through this checklist:
 ### Engine Layer
 
 - All Engine modules must have corresponding `*_spec.lua` tests in `Tests/`
-- Tests run via `busted Tests/` (CI runtime: Lua 5.4.6 — busted 2.3.0 dropped Lua 5.1 support; WoW target is Lua 5.1; Engine code must remain 5.1-compatible; not run in WoW)
+- Tests run via `busted Tests/` (CI runtime: Lua 5.1, matching the WoW target; Engine code must remain 5.1-compatible; not run in WoW). A local install is often a later version — 5.4 is common on Windows — and busted will happily run Engine tests under it, so a local pass does not prove 5.1 compatibility. CI is the final word.
 - Engine tests must not require any WoW API stubs — if they do, the code under test is in the wrong layer
 
 ### UI Layer
